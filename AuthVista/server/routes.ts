@@ -158,9 +158,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/animals', isAuthenticated, async (req: any, res) => {
+  app.post('/api/animals', isAuthenticated, async (req: AuthRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getUserId(req);
       const user = await storage.getUser(userId);
       
       if (user?.role !== 'department') {
@@ -188,9 +188,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch('/api/animals/:id', isAuthenticated, async (req: any, res) => {
+  app.patch('/api/animals/:id', isAuthenticated, async (req: AuthRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getUserId(req);
       const user = await storage.getUser(userId);
       
       if (user?.role !== 'department') {
@@ -219,9 +219,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/animals/:id/locations', isAuthenticated, async (req: any, res) => {
+  app.post('/api/animals/:id/locations', isAuthenticated, async (req: AuthRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getUserId(req);
       const user = await storage.getUser(userId);
       
       if (user?.role !== 'department') {
@@ -260,9 +260,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/safe-zones', isAuthenticated, async (req: any, res) => {
+  app.post('/api/safe-zones', isAuthenticated, async (req: AuthRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getUserId(req);
       const user = await storage.getUser(userId);
       
       if (user?.role !== 'department') {
@@ -279,9 +279,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Safari booking routes
-  app.get('/api/bookings/all', isAuthenticated, async (req: any, res) => {
+  app.get('/api/bookings/all', isAuthenticated, async (req: AuthRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getUserId(req);
       const user = await storage.getUser(userId);
       
       if (user?.role !== 'department') {
@@ -296,9 +296,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/bookings/my', isAuthenticated, async (req: any, res) => {
+  app.get('/api/bookings/my', isAuthenticated, async (req: AuthRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getUserId(req);
       const bookings = await storage.getUserBookings(userId);
       res.json(bookings);
     } catch (error) {
@@ -307,9 +307,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/bookings', isAuthenticated, async (req: any, res) => {
+  app.post('/api/bookings', isAuthenticated, async (req: AuthRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getUserId(req);
       const data = insertSafariBookingSchema.parse({
         ...req.body,
         userId,
@@ -333,9 +333,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/alerts/my', isAuthenticated, async (req: any, res) => {
+  app.get('/api/alerts/my', isAuthenticated, async (req: AuthRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getUserId(req);
       const alerts = await storage.getUserAlerts(userId);
       res.json(alerts);
     } catch (error) {
@@ -344,9 +344,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/alerts', isAuthenticated, async (req: any, res) => {
+  app.post('/api/alerts', isAuthenticated, async (req: AuthRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getUserId(req);
       const user = await storage.getUser(userId);
       
       if (user?.role !== 'department') {

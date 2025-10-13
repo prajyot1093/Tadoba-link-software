@@ -14,7 +14,7 @@ import {
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// Session storage table - Required for Replit Auth
+// Session storage table - Optional for express-session
 export const sessions = pgTable(
   "sessions",
   {
