@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { PawPrint, Shield, MapPin, Sparkles, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
+import { AuthModal } from "@/components/auth-modal";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 export default function Landing() {
   const [leaves, setLeaves] = useState<Array<{ id: number; left: string; delay: string }>>([]);
@@ -50,10 +52,25 @@ export default function Landing() {
             onClick={() => window.location.href = '/api/login'}
             data-testid="button-login"
             className="bg-primary hover:bg-primary/90"
+            style={{ display: 'none' }}
           >
             Login
             <ChevronRight className="w-4 h-4 ml-1" />
           </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button 
+                data-testid="button-login"
+                className="bg-primary hover:bg-primary/90"
+              >
+                Login
+                <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[500px]">
+              <AuthModal />
+            </DialogContent>
+          </Dialog>
         </header>
 
         {/* Hero Section */}
@@ -81,15 +98,21 @@ export default function Landing() {
             </p>
 
             <div className="flex flex-wrap gap-4 justify-center pt-4">
-              <Button 
-                size="lg"
-                onClick={() => window.location.href = '/api/login'}
-                data-testid="button-get-started"
-                className="bg-primary hover:bg-primary/90 text-lg px-8"
-              >
-                Get Started
-                <ChevronRight className="w-5 h-5 ml-2" />
-              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button 
+                    size="lg"
+                    data-testid="button-get-started"
+                    className="bg-primary hover:bg-primary/90 text-lg px-8"
+                  >
+                    Get Started
+                    <ChevronRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[500px]">
+                  <AuthModal />
+                </DialogContent>
+              </Dialog>
               <Button 
                 size="lg" 
                 variant="outline"
