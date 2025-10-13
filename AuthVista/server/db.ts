@@ -9,64 +9,81 @@ export const db = drizzle(sqlite, { schema });
 // Initialize tables if they don't exist
 sqlite.exec(`
   CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
-    role TEXT NOT NULL DEFAULT 'tourist',
-    name TEXT
+    first_name TEXT,
+    last_name TEXT,
+    profile_image_url TEXT,
+    role TEXT NOT NULL DEFAULT 'local',
+    area TEXT,
+    created_at TEXT DEFAULT (datetime('now')),
+    updated_at TEXT DEFAULT (datetime('now'))
   );
 
   CREATE TABLE IF NOT EXISTS animals (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
     name TEXT NOT NULL,
     species TEXT NOT NULL,
+    age INTEGER,
+    gender TEXT,
+    health_status TEXT DEFAULT 'healthy',
     location TEXT,
-    status TEXT NOT NULL DEFAULT 'safe',
-    last_seen DATETIME DEFAULT CURRENT_TIMESTAMP,
+    last_seen TEXT DEFAULT (datetime('now')),
     description TEXT,
-    image_url TEXT
+    image_url TEXT,
+    tracker_id TEXT,
+    created_at TEXT DEFAULT (datetime('now')),
+    updated_at TEXT DEFAULT (datetime('now'))
   );
 
   CREATE TABLE IF NOT EXISTS locations (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    animal_id INTEGER NOT NULL,
+    id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+    animal_id TEXT NOT NULL,
     latitude REAL NOT NULL,
     longitude REAL NOT NULL,
-    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    timestamp TEXT DEFAULT (datetime('now')),
     accuracy REAL,
+    source TEXT,
     FOREIGN KEY (animal_id) REFERENCES animals(id)
   );
 
   CREATE TABLE IF NOT EXISTS bookings (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
+    id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+    user_id TEXT NOT NULL,
     zone TEXT NOT NULL,
     visit_date TEXT NOT NULL,
     visitors INTEGER NOT NULL,
     status TEXT NOT NULL DEFAULT 'pending',
     notes TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_at TEXT DEFAULT (datetime('now')),
+    updated_at TEXT DEFAULT (datetime('now')),
     FOREIGN KEY (user_id) REFERENCES users(id)
   );
 
   CREATE TABLE IF NOT EXISTS alerts (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    animal_id INTEGER,
+    id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+    animal_id TEXT,
     type TEXT NOT NULL,
     severity TEXT NOT NULL,
     message TEXT NOT NULL,
     location TEXT,
-    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    timestamp TEXT DEFAULT (datetime('now')),
     resolved INTEGER DEFAULT 0,
+    resolved_at TEXT,
+    resolved_by TEXT,
     FOREIGN KEY (animal_id) REFERENCES animals(id)
   );
 
   CREATE TABLE IF NOT EXISTS safe_zones (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
     name TEXT NOT NULL,
     coordinates TEXT NOT NULL,
     capacity INTEGER,
     current_count INTEGER DEFAULT 0,
-    status TEXT NOT NULL DEFAULT 'active'
+    status TEXT NOT NULL DEFAULT 'active',
+    description TEXT,
+    created_at TEXT DEFAULT (datetime('now')),
+    updated_at TEXT DEFAULT (datetime('now'))
   );
 `);
