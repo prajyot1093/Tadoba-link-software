@@ -20,6 +20,7 @@ import {
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and } from "drizzle-orm";
+import { v4 as uuidv4 } from 'uuid';
 
 export interface IStorage {
   // User operations - JWT authentication
@@ -67,7 +68,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createUser(userData: UpsertUser): Promise<User> {
-    const [user] = await db.insert(users).values(userData).returning();
+    const userWithId = {
+      ...userData,
+      id: uuidv4(),
+    };
+    const [user] = await db.insert(users).values(userWithId).returning();
     return user;
   }
 
