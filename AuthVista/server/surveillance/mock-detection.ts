@@ -1,5 +1,7 @@
 // Mock detection service for demonstration
-// Simulates AI object detection without requiring TensorFlow.js
+// Simulates YOLO model for WILDLIFE CONSERVATION
+// TARGET CLASSES: Humans (poachers), Weapons (guns/rifles), Cars (unauthorized vehicles)
+// This will be replaced with real YOLOv8 model post-hackathon
 
 export interface DetectedObject {
   class: string;
@@ -20,14 +22,16 @@ export interface DetectionResult {
 }
 
 // Simulate realistic detection results
+// YOLO Model Focus: Humans, Weapons, Cars (Anti-Poaching)
 export function mockDetection(imageUrl: string): DetectionResult {
   // Random number of detections (0-3)
   const numDetections = Math.floor(Math.random() * 4);
   
   const possibleObjects = [
-    { class: 'person', baseThreat: 'high' },
-    { class: 'car', baseThreat: 'medium' },
-    { class: 'truck', baseThreat: 'medium' },
+    { class: 'person', baseThreat: 'high' },      // Potential poacher/intruder
+    { class: 'weapon', baseThreat: 'critical' },  // Gun/rifle - immediate threat
+    { class: 'car', baseThreat: 'medium' },       // Unauthorized vehicle
+    { class: 'truck', baseThreat: 'medium' },     // Large vehicle
     { class: 'motorcycle', baseThreat: 'low' },
     { class: 'bicycle', baseThreat: 'low' },
   ];

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { AddCameraModal } from '@/components/surveillance/add-camera-modal';
 import { UploadImageModal } from '@/components/surveillance/upload-image-modal';
+import { Link } from 'wouter';
 
 interface Camera {
   id: string;
@@ -260,36 +261,38 @@ export default function SurveillanceDashboard() {
                     const objectTypes = Array.from(new Set(detection.detected_objects.map(o => o.class)));
                     
                     return (
-                      <Card key={detection.id} className="p-3">
-                        <div className="flex items-start justify-between mb-2">
-                          <Badge className={getThreatColor(detection.threat_level)}>
-                            {detection.threat_level.toUpperCase()}
-                          </Badge>
-                          <span className="text-xs text-gray-500">
-                            {formatTimeAgo(detection.timestamp)}
-                          </span>
-                        </div>
-                        <p className="text-sm font-medium mb-1">
-                          {camera?.name || 'Unknown Camera'}
-                        </p>
-                        <div className="text-xs text-gray-600">
-                          <div className="mb-1">
-                            <strong>{detection.detection_count}</strong> objects detected
+                      <Link key={detection.id} href={`/surveillance/detection/${detection.id}`}>
+                        <Card className="p-3 cursor-pointer hover:shadow-lg transition-all">
+                          <div className="flex items-start justify-between mb-2">
+                            <Badge className={getThreatColor(detection.threat_level)}>
+                              {detection.threat_level.toUpperCase()}
+                            </Badge>
+                            <span className="text-xs text-gray-500">
+                              {formatTimeAgo(detection.timestamp)}
+                            </span>
                           </div>
-                          <div className="flex flex-wrap gap-1">
-                            {objectTypes.map(type => (
-                              <Badge key={type} variant="secondary" className="text-xs">
-                                {type}
-                              </Badge>
-                            ))}
+                          <p className="text-sm font-medium mb-1">
+                            {camera?.name || 'Unknown Camera'}
+                          </p>
+                          <div className="text-xs text-gray-600">
+                            <div className="mb-1">
+                              <strong>{detection.detection_count}</strong> objects detected
+                            </div>
+                            <div className="flex flex-wrap gap-1">
+                              {objectTypes.map(type => (
+                                <Badge key={type} variant="secondary" className="text-xs">
+                                  {type}
+                                </Badge>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                        {detection.threat_level === 'critical' && (
-                          <div className="mt-2 p-2 bg-red-50 rounded text-xs text-red-700">
-                            ⚠️ Weapon detected - Immediate action required!
-                          </div>
-                        )}
-                      </Card>
+                          {detection.threat_level === 'critical' && (
+                            <div className="mt-2 p-2 bg-red-50 rounded text-xs text-red-700">
+                              ⚠️ Weapon detected - Immediate action required!
+                            </div>
+                          )}
+                        </Card>
+                      </Link>
                     );
                   })}
                 </div>
