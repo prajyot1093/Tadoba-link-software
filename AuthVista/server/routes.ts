@@ -2,6 +2,8 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
+import multer from "multer";
+import { processFrame } from "./surveillance/mock-detection";
 import { 
   isAuthenticated, 
   generateToken, 
@@ -17,6 +19,12 @@ import {
   insertSafariBookingSchema,
   insertAlertSchema,
 } from "@shared/schema";
+
+// Configure multer for file uploads
+const upload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+});
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes - Register
@@ -440,6 +448,123 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Store broadcast function globally for use in routes
   (global as any).broadcastAlert = broadcastAlert;
+
+  // ============ SURVEILLANCE ROUTES ============
+  
+  // Get all cameras
+  app.get('/api/surveillance/cameras', isAuthenticated, async (req, res) => {
+    try {
+      const cameras = await storage.getAllCameras();
+      res.json(cameras);
+    } catch (error) {
+      console.error('Error fetching cameras:', error);
+      res.status(500).json({ message: 'Failed to fetch cameras' });
+    }
+  });
+
+  // Register new camera
+  app.post('/api/surveillance/cameras', isAuthenticated, async (req, res) => {
+    try {
+      const { name, location, latitude, longitude, zone } = req.body;
+      
+      if (!name || !location || latitude === undefined || longitude === undefined) {
+        return res.status(400).json({ message: 'Missing required fields' });
+      }
+
+      const camera = await storage.createCamera({
+        name,
+        location,
+        latitude,
+        longitude,
+        zone,
+        status: 'active',
+      });
+
+      res.status(201).json(camera);
+    } catch (error) {
+      console.error('Error creating camera:', error);
+      res.status(500).json({ message: 'Failed to create camera' });
+    }
+  });
+
+  // Process image frame for detection
+  app.post('/api/surveillance/process-frame', isAuthenticated, upload.single('image'), async (req, res) => {
+    try {
+      const { cameraId } = req.body;
+      const imageFile = req.file;
+
+      if (!cameraId || !imageFile) {
+        return res.status(400).json({ message: 'Camera ID and image are required' });
+      }
+
+      // Convert buffer to base64 data URL
+      const imageUrl = `data:${imageFile.mimetype};base64,${imageFile.buffer.toString('base64')}`;
+
+      // Process frame with mock detection
+      const result = await processFrame(imageUrl);
+
+      // Save detection to database
+      const detection = await storage.createDetection({
+        camera_id: cameraId,
+        image_url: imageUrl,
+        detected_objects: result.detections,
+        detection_count: result.detectionCount,
+        threat_level: result.threatLevel,
+      });
+
+      // Broadcast alert if threat detected
+      if (result.detectionCount > 0) {
+        broadcastAlert({
+          type: 'detection',
+          detectionId: detection.id,
+          cameraId,
+          threatLevel: result.threatLevel,
+          count: result.detectionCount,
+          timestamp: result.timestamp,
+        });
+      }
+
+      res.json({
+        detection,
+        result,
+      });
+    } catch (error) {
+      console.error('Error processing frame:', error);
+      res.status(500).json({ message: 'Failed to process frame' });
+    }
+  });
+
+  // Get recent detections
+  app.get('/api/surveillance/detections', isAuthenticated, async (req, res) => {
+    try {
+      const { cameraId, limit } = req.query;
+      const detections = await storage.getDetections({
+        camera_id: cameraId as string,
+        limit: limit ? parseInt(limit as string) : 50,
+      });
+      res.json(detections);
+    } catch (error) {
+      console.error('Error fetching detections:', error);
+      res.status(500).json({ message: 'Failed to fetch detections' });
+    }
+  });
+
+  // Get single detection
+  app.get('/api/surveillance/detections/:id', isAuthenticated, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const detection = await storage.getDetection(id);
+      
+      if (!detection) {
+        return res.status(404).json({ message: 'Detection not found' });
+      }
+
+      res.json(detection);
+    } catch (error) {
+      console.error('Error fetching detection:', error);
+      res.status(500).json({ message: 'Failed to fetch detection' });
+    }
+  });
 
   return httpServer;
 }
