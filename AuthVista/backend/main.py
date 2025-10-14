@@ -98,6 +98,13 @@ async def startup_event():
     """Initialize database on startup"""
     init_db()
     print("✅ Database initialized")
+    
+    # Register API routes
+    from routes import geofences, cameras, detections
+    app.include_router(geofences.router)
+    app.include_router(cameras.router)
+    app.include_router(detections.router)
+    print("✅ API routes registered")
     print("✅ FastAPI server ready")
 
 # ==================== AUTH ROUTES ====================
