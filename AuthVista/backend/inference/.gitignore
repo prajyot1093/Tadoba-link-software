@@ -1,0 +1,20 @@
+# Test artifacts
+test_image.jpg
+test_image_annotated.jpg
+test_snapshots/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment
+.env
+*.env.local
+
+# Logs
+*.log
+
+# Snapshots (generated at runtime)
+snapshots/
