@@ -10,6 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import { motion } from "framer-motion";
+import { GlassCard } from "@/components/ui/glass-card";
 import { 
   Settings, 
   Camera, 
@@ -21,7 +23,9 @@ import {
   RotateCcw,
   AlertTriangle,
   CheckCircle2,
-  Sparkles
+  Sparkles,
+  TreePine,
+  Leaf
 } from "lucide-react";
 
 interface SystemSettings {
@@ -257,53 +261,60 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
-                <Settings className="h-10 w-10 text-primary" />
-                Settings & Configuration
-              </h1>
-              <p className="text-muted-foreground text-lg">
-                Manage system settings, camera parameters, and user preferences
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                onClick={handleReset}
-                className="gap-2"
-              >
-                <RotateCcw className="h-4 w-4" />
-                Reset to Defaults
-              </Button>
-              <Button 
-                onClick={handleSave} 
-                disabled={!hasChanges || saveSettingsMutation.isPending}
-                className="gap-2"
-              >
-                <Save className="h-4 w-4" />
-                {saveSettingsMutation.isPending ? "Saving..." : "Save Changes"}
-              </Button>
-            </div>
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center justify-between"
+        >
+          <div>
+            <h1 className="text-4xl font-bold mb-2 flex items-center gap-3 font-quicksand">
+              <TreePine className="h-10 w-10 text-primary" />
+              Settings & Configuration
+            </h1>
+            <p className="text-muted-foreground text-lg flex items-center gap-2">
+              <Leaf className="h-4 w-4 text-primary/70" />
+              Manage system settings, camera parameters, and user preferences
+            </p>
           </div>
-          {hasChanges && (
-            <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4 text-yellow-500" />
-              <span className="text-sm">You have unsaved changes</span>
-            </div>
-          )}
-        </div>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              onClick={handleReset}
+              className="glass-button gap-2"
+            >
+              <RotateCcw className="h-4 w-4" />
+              Reset
+            </Button>
+            <Button 
+              onClick={handleSave} 
+              disabled={!hasChanges || saveSettingsMutation.isPending}
+              className="glass-button gap-2"
+            >
+              <Save className="h-4 w-4" />
+              {saveSettingsMutation.isPending ? "Saving..." : "Save Changes"}
+            </Button>
+          </div>
+        </motion.div>
+        {hasChanges && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="p-3 glass-card rounded-lg flex items-center gap-2"
+          >
+            <AlertTriangle className="h-4 w-4 text-yellow-500" />
+            <span className="text-sm">You have unsaved changes</span>
+          </motion.div>
+        )}
 
         {/* Settings Tabs */}
         <Tabs defaultValue="camera" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="glass-card-strong grid w-full grid-cols-4">
             <TabsTrigger value="camera" className="gap-2">
               <Camera className="h-4 w-4" />
-              Camera & Detection
+              Camera
             </TabsTrigger>
             <TabsTrigger value="notifications" className="gap-2">
               <Bell className="h-4 w-4" />
@@ -321,10 +332,10 @@ export default function SettingsPage() {
 
           {/* Camera & Detection Settings */}
           <TabsContent value="camera" className="space-y-4">
-            <Card>
+            <GlassCard strength="medium">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Camera className="h-5 w-5" />
+                  <TreePine className="h-5 w-5 text-primary" />
                   Detection Parameters
                 </CardTitle>
                 <CardDescription>
@@ -430,15 +441,15 @@ export default function SettingsPage() {
                   </p>
                 </div>
               </CardContent>
-            </Card>
+            </GlassCard>
           </TabsContent>
 
           {/* Notification Settings */}
           <TabsContent value="notifications" className="space-y-4">
-            <Card>
+            <GlassCard strength="light">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Bell className="h-5 w-5" />
+                  <Bell className="h-5 w-5 text-primary" />
                   Alert Notifications
                 </CardTitle>
                 <CardDescription>
@@ -555,15 +566,15 @@ export default function SettingsPage() {
                   )}
                 </div>
               </CardContent>
-            </Card>
+            </GlassCard>
           </TabsContent>
 
           {/* Display Settings */}
           <TabsContent value="display" className="space-y-4">
-            <Card>
+            <GlassCard strength="light">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Monitor className="h-5 w-5" />
+                  <Monitor className="h-5 w-5 text-primary" />
                   Display Preferences
                 </CardTitle>
                 <CardDescription>
@@ -677,15 +688,15 @@ export default function SettingsPage() {
                   />
                 </div>
               </CardContent>
-            </Card>
+            </GlassCard>
           </TabsContent>
 
           {/* System Settings */}
           <TabsContent value="system" className="space-y-4">
-            <Card>
+            <GlassCard strength="light">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Shield className="h-5 w-5" />
+                  <Shield className="h-5 w-5 text-primary" />
                   System Information
                 </CardTitle>
                 <CardDescription>
@@ -748,11 +759,11 @@ export default function SettingsPage() {
                   </p>
                 </div>
               </CardContent>
-            </Card>
+            </GlassCard>
 
-            <Card className="border-blue-500/20">
+            <GlassCard strength="light" glow>
               <CardHeader>
-                <CardTitle className="text-blue-500 flex items-center gap-2">
+                <CardTitle className="text-primary flex items-center gap-2">
                   <Sparkles className="h-5 w-5" />
                   Demo Data Generator
                 </CardTitle>
@@ -761,7 +772,7 @@ export default function SettingsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between p-4 border border-blue-500/20 rounded-lg bg-blue-500/5">
+                <div className="flex items-center justify-between p-4 glass-card rounded-lg">
                   <div>
                     <p className="font-medium">Generate Demo Surveillance Data</p>
                     <p className="text-xs text-muted-foreground">
@@ -773,16 +784,16 @@ export default function SettingsPage() {
                     size="sm" 
                     onClick={handleGenerateDemo}
                     disabled={generatingDemo}
-                    className="gap-2"
+                    className="glass-button gap-2"
                   >
                     <Sparkles className="h-4 w-4" />
                     {generatingDemo ? "Generating..." : "Generate Data"}
                   </Button>
                 </div>
               </CardContent>
-            </Card>
+            </GlassCard>
 
-            <Card>
+            <GlassCard strength="light">
               <CardHeader>
                 <CardTitle className="text-destructive flex items-center gap-2">
                   <AlertTriangle className="h-5 w-5" />
@@ -817,7 +828,7 @@ export default function SettingsPage() {
                   </Button>
                 </div>
               </CardContent>
-            </Card>
+            </GlassCard>
           </TabsContent>
         </Tabs>
       </div>
