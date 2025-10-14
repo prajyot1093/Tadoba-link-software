@@ -330,13 +330,15 @@ export default function SurveillanceDashboard() {
               <Activity className="h-6 w-6" />
               <span className="text-sm">Upload Image</span>
             </Button>
+            <Link href="/analytics">
+              <Button variant="outline" className="h-20 w-full flex-col gap-2">
+                <Shield className="h-6 w-6" />
+                <span className="text-sm">Analytics</span>
+              </Button>
+            </Link>
             <Button variant="outline" className="h-20 flex-col gap-2">
               <AlertTriangle className="h-6 w-6" />
               <span className="text-sm">View Alerts</span>
-            </Button>
-            <Button variant="outline" className="h-20 flex-col gap-2">
-              <Shield className="h-6 w-6" />
-              <span className="text-sm">Analytics</span>
             </Button>
           </div>
         </CardContent>

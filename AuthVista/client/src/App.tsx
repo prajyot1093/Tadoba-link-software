@@ -20,6 +20,7 @@ import TigerTracker from "@/pages/tiger-tracker";
 import SafeZones from "@/pages/safe-zones";
 import SurveillanceDashboard from "@/pages/surveillance";
 import DetectionDetail from "@/pages/surveillance/detection-detail";
+import AnalyticsDashboard from "@/pages/analytics";
 
 function Router() {
   const { isAuthenticated, isLoading, isDepartment } = useAuth();
@@ -39,6 +40,7 @@ function Router() {
               <Route path="/bookings" component={Bookings} />
               <Route path="/surveillance" component={SurveillanceDashboard} />
               <Route path="/surveillance/detection/:id" component={DetectionDetail} />
+              <Route path="/analytics" component={AnalyticsDashboard} />
             </>
           ) : (
             <>
@@ -49,6 +51,7 @@ function Router() {
               <Route path="/safari" component={SafariBooking} />
               <Route path="/surveillance" component={SurveillanceDashboard} />
               <Route path="/surveillance/detection/:id" component={DetectionDetail} />
+              <Route path="/analytics" component={AnalyticsDashboard} />
             </>
           )}
         </>
