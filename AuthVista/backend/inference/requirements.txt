@@ -1,0 +1,29 @@
+# YOLO Inference Worker Dependencies
+# For wildlife detection using YOLOv8
+
+# Core ML/CV
+ultralytics==8.0.196        # YOLOv8 framework
+opencv-python==4.8.1.78     # Image processing
+pillow==10.0.1              # Image loading
+numpy==1.24.3               # Array operations
+torch==2.0.1                # PyTorch backend
+torchvision==0.15.2         # Computer vision models
+
+# Real-time Communication
+python-socketio[client]==5.9.0  # Socket.IO client for WebSocket
+aiohttp==3.8.5              # Async HTTP for Socket.IO
+websockets==11.0.3          # WebSocket support
+
+# API Communication
+requests==2.31.0            # HTTP requests to backend API
+httpx==0.24.1               # Async HTTP client
+
+# Data Processing
+python-dateutil==2.8.2      # Date/time utilities
+pytz==2023.3                # Timezone support
+
+# Environment & Config
+python-dotenv==1.0.0        # Environment variables
+
+# Logging & Monitoring
+loguru==0.7.0               # Better logging
