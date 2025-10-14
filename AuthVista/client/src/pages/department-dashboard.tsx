@@ -1,8 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
-import { PawPrint, MapPin, AlertTriangle, TrendingUp, Upload } from "lucide-react";
+import { PawPrint, MapPin, AlertTriangle, TrendingUp, Upload, TreePine, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import { motion } from "framer-motion";
+import { GlassCard } from "@/components/ui/glass-card";
 import type { Animal, Alert } from "@shared/schema";
 
 export default function DepartmentDashboard() {
@@ -24,86 +26,99 @@ export default function DepartmentDashboard() {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center justify-between"
+      >
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Department Dashboard</h1>
-          <p className="text-muted-foreground mt-1">Wildlife monitoring and management</p>
+          <h1 className="text-4xl font-bold text-foreground flex items-center gap-3 font-quicksand">
+            <TreePine className="h-10 w-10 text-primary" />
+            Department Dashboard
+          </h1>
+          <p className="text-muted-foreground mt-2 flex items-center gap-2">
+            <Leaf className="h-4 w-4 text-primary/70" />
+            Wildlife monitoring and management
+          </p>
         </div>
         <Link href="/animals">
-          <Button className="bg-primary" data-testid="button-add-animal">
-            <Upload className="w-4 h-4 mr-2" />
+          <Button className="glass-button gap-2" data-testid="button-add-animal">
+            <Upload className="w-4 h-4" />
             Add Animal Data
           </Button>
         </Link>
-      </div>
+      </motion.div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-card/50 backdrop-blur-sm border-card-border hover-elevate">
+        <GlassCard strength="medium" animated>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-card-foreground">Total Animals</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Animals</CardTitle>
             <PawPrint className="w-4 h-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground" data-testid="stat-total-animals">
+            <div className="text-2xl font-bold" data-testid="stat-total-animals">
               {loadingAnimals ? "..." : totalTracked}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               {activeAnimals.length} active trackers
             </p>
           </CardContent>
-        </Card>
+        </GlassCard>
 
-        <Card className="bg-card/50 backdrop-blur-sm border-card-border hover-elevate">
+        <GlassCard strength="medium" animated>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-card-foreground">Live Locations</CardTitle>
-            <MapPin className="w-4 h-4 text-orange" />
+            <CardTitle className="text-sm font-medium">Live Locations</CardTitle>
+            <MapPin className="w-4 h-4 text-orange-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground" data-testid="stat-live-locations">
+            <div className="text-2xl font-bold" data-testid="stat-live-locations">
               {activeAnimals.filter(a => a.lastSeenLat).length}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               GPS tracked today
             </p>
           </CardContent>
-        </Card>
+        </GlassCard>
 
-        <Card className="bg-card/50 backdrop-blur-sm border-card-border hover-elevate">
+        <GlassCard strength="medium" animated>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-card-foreground">Alerts Today</CardTitle>
+            <CardTitle className="text-sm font-medium">Alerts Today</CardTitle>
             <AlertTriangle className="w-4 h-4 text-destructive" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground" data-testid="stat-alerts-today">
+            <div className="text-2xl font-bold" data-testid="stat-alerts-today">
               {todayAlerts}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               Proximity warnings sent
             </p>
           </CardContent>
-        </Card>
+        </GlassCard>
 
-        <Card className="bg-card/50 backdrop-blur-sm border-card-border hover-elevate">
+        <GlassCard strength="medium" animated>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-card-foreground">Conservation Rate</CardTitle>
-            <TrendingUp className="w-4 h-4 text-primary" />
+            <CardTitle className="text-sm font-medium">Conservation Rate</CardTitle>
+            <TrendingUp className="w-4 h-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">98.5%</div>
+            <div className="text-2xl font-bold">98.5%</div>
             <p className="text-xs text-muted-foreground mt-1">
               Safety success rate
             </p>
           </CardContent>
-        </Card>
+        </GlassCard>
       </div>
 
       {/* Quick Actions & Recent Activity */}
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Recent Animals */}
-        <Card className="bg-card/50 backdrop-blur-sm border-card-border">
+        <GlassCard strength="light">
           <CardHeader>
-            <CardTitle className="text-card-foreground">Recent Animal Updates</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <PawPrint className="h-5 w-5 text-primary" />
+              Recent Animal Updates
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {loadingAnimals ? (
@@ -141,12 +156,15 @@ export default function DepartmentDashboard() {
               </div>
             )}
           </CardContent>
-        </Card>
+        </GlassCard>
 
         {/* Recent Alerts */}
-        <Card className="bg-card/50 backdrop-blur-sm border-card-border">
+        <GlassCard strength="light">
           <CardHeader>
-            <CardTitle className="text-card-foreground">Recent Proximity Alerts</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-destructive" />
+              Recent Proximity Alerts
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {recentAlerts.length === 0 ? (
@@ -175,13 +193,16 @@ export default function DepartmentDashboard() {
               </div>
             )}
           </CardContent>
-        </Card>
+        </GlassCard>
       </div>
 
       {/* Camera Feed Upload Section */}
-      <Card className="bg-card/50 backdrop-blur-sm border-card-border">
+      <GlassCard strength="medium" glow>
         <CardHeader>
-          <CardTitle className="text-card-foreground">AI Camera Feed Analysis</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <TreePine className="h-5 w-5 text-primary" />
+            AI Camera Feed Analysis
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-12 space-y-4">
@@ -200,7 +221,7 @@ export default function DepartmentDashboard() {
             </Button>
           </div>
         </CardContent>
-      </Card>
+      </GlassCard>
     </div>
   );
 }
