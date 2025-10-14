@@ -3,7 +3,7 @@ import Database from 'better-sqlite3';
 import * as schema from "@shared/schema";
 
 // Use SQLite for local development
-const sqlite = new Database('tadoba.db');
+export const sqlite = new Database('tadoba.db');
 export const db = drizzle(sqlite, { schema });
 
 // Initialize tables if they don't exist
@@ -78,5 +78,28 @@ sqlite.exec(`
     created_at TEXT DEFAULT (datetime('now')),
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (animal_id) REFERENCES animals(id)
+  );
+
+  CREATE TABLE IF NOT EXISTS cameras (
+    id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+    name TEXT NOT NULL,
+    location TEXT NOT NULL,
+    latitude REAL NOT NULL,
+    longitude REAL NOT NULL,
+    status TEXT DEFAULT 'active' NOT NULL,
+    zone TEXT,
+    created_at TEXT DEFAULT (datetime('now')),
+    updated_at TEXT DEFAULT (datetime('now'))
+  );
+
+  CREATE TABLE IF NOT EXISTS detections (
+    id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+    camera_id TEXT NOT NULL,
+    image_url TEXT NOT NULL,
+    detected_objects TEXT NOT NULL,
+    detection_count INTEGER DEFAULT 0,
+    threat_level TEXT DEFAULT 'low',
+    timestamp TEXT DEFAULT (datetime('now')),
+    FOREIGN KEY (camera_id) REFERENCES cameras(id)
   );
 `);
