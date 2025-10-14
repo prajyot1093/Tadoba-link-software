@@ -1,4 +1,4 @@
-import { Home, Map, MessageSquare, PawPrint, Calendar, Plus, Bell } from "lucide-react";
+import { Home, Map, MessageSquare, PawPrint, Calendar, Plus, Bell, Camera } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -27,6 +27,11 @@ export function AppSidebar() {
       icon: Home,
     },
     {
+      title: "Surveillance",
+      url: "/surveillance",
+      icon: Camera,
+    },
+    {
       title: "Animal Tracker",
       url: "/animals",
       icon: PawPrint,
@@ -53,6 +58,11 @@ export function AppSidebar() {
       title: "Home",
       url: "/",
       icon: Home,
+    },
+    {
+      title: "Surveillance",
+      url: "/surveillance",
+      icon: Camera,
     },
     {
       title: "Safe Zones",

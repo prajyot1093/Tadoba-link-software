@@ -18,6 +18,7 @@ import SafariBooking from "@/pages/safari-booking";
 import Bookings from "@/pages/bookings";
 import TigerTracker from "@/pages/tiger-tracker";
 import SafeZones from "@/pages/safe-zones";
+import SurveillanceDashboard from "@/pages/surveillance";
 
 function Router() {
   const { isAuthenticated, isLoading, isDepartment } = useAuth();
@@ -35,6 +36,7 @@ function Router() {
               <Route path="/map" component={MapView} />
               <Route path="/chat" component={Chat} />
               <Route path="/bookings" component={Bookings} />
+              <Route path="/surveillance" component={SurveillanceDashboard} />
             </>
           ) : (
             <>
@@ -43,6 +45,7 @@ function Router() {
               <Route path="/tigers" component={TigerTracker} />
               <Route path="/chat" component={Chat} />
               <Route path="/safari" component={SafariBooking} />
+              <Route path="/surveillance" component={SurveillanceDashboard} />
             </>
           )}
         </>
