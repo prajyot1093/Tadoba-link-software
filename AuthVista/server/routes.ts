@@ -566,6 +566,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Demo data generation endpoint (for hackathon)
+  app.post('/api/demo/generate', isAuthenticated, async (req, res) => {
+    try {
+      const { generateDemoData } = await import('./scripts/generate-demo-data');
+      const result = await generateDemoData();
+      res.json({
+        message: 'Demo data generated successfully',
+        stats: result.stats
+      });
+    } catch (error) {
+      console.error('Error generating demo data:', error);
+      res.status(500).json({ message: 'Failed to generate demo data' });
+    }
+  });
+
   // Settings routes
   const settingsRouter = await import('./routes/settings');
   app.use('/api/settings', settingsRouter.default);

@@ -20,7 +20,8 @@ import {
   Save,
   RotateCcw,
   AlertTriangle,
-  CheckCircle2
+  CheckCircle2,
+  Sparkles
 } from "lucide-react";
 
 interface SystemSettings {
@@ -60,6 +61,7 @@ export default function SettingsPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [hasChanges, setHasChanges] = useState(false);
+  const [generatingDemo, setGeneratingDemo] = useState(false);
 
   // Camera & Detection Settings
   const [cameraConfig, setCameraConfig] = useState<CameraConfig>({
@@ -209,6 +211,38 @@ export default function SettingsPage() {
     ];
 
     saveSettingsMutation.mutate(allSettings);
+  };
+
+  // Generate demo data
+  const handleGenerateDemo = async () => {
+    setGeneratingDemo(true);
+    try {
+      const response = await fetch('/api/demo/generate', {
+        method: 'POST',
+        credentials: 'include'
+      });
+      
+      if (!response.ok) throw new Error('Failed to generate demo data');
+      
+      const result = await response.json();
+      
+      toast({
+        title: "Demo data generated!",
+        description: `Created ${result.stats.totalCameras} cameras and ${result.stats.totalDetections} detections`,
+      });
+      
+      // Refresh page data
+      queryClient.invalidateQueries({ queryKey: ["/api/surveillance/cameras"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/surveillance/detections"] });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to generate demo data",
+        variant: "destructive"
+      });
+    } finally {
+      setGeneratingDemo(false);
+    }
   };
 
   if (isLoading) {
@@ -712,6 +746,38 @@ export default function SettingsPage() {
                   <p className="text-sm text-muted-foreground">
                     {new Date().toLocaleString()}
                   </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-blue-500/20">
+              <CardHeader>
+                <CardTitle className="text-blue-500 flex items-center gap-2">
+                  <Sparkles className="h-5 w-5" />
+                  Demo Data Generator
+                </CardTitle>
+                <CardDescription>
+                  Generate realistic demo data for hackathon presentation
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between p-4 border border-blue-500/20 rounded-lg bg-blue-500/5">
+                  <div>
+                    <p className="font-medium">Generate Demo Surveillance Data</p>
+                    <p className="text-xs text-muted-foreground">
+                      Creates 12 cameras and 100+ detections across Tadoba with realistic threat levels
+                    </p>
+                  </div>
+                  <Button 
+                    variant="default" 
+                    size="sm" 
+                    onClick={handleGenerateDemo}
+                    disabled={generatingDemo}
+                    className="gap-2"
+                  >
+                    <Sparkles className="h-4 w-4" />
+                    {generatingDemo ? "Generating..." : "Generate Data"}
+                  </Button>
                 </div>
               </CardContent>
             </Card>
