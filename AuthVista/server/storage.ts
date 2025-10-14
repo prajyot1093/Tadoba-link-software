@@ -105,10 +105,15 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createAnimal(animalData: InsertAnimal): Promise<Animal> {
-    const [animal] = await db.insert(animals).values({
+    const now = new Date();
+    const animalWithId = {
       ...animalData,
-      lastSeenAt: animalData.lastSeenLat && animalData.lastSeenLng ? new Date() : undefined,
-    }).returning();
+      id: uuidv4(),
+      lastSeenAt: animalData.lastSeenLat && animalData.lastSeenLng ? now : undefined,
+      createdAt: now,
+      updatedAt: now,
+    };
+    const [animal] = await db.insert(animals).values(animalWithId).returning();
     return animal;
   }
 
@@ -127,7 +132,12 @@ export class DatabaseStorage implements IStorage {
 
   // Animal location operations
   async createAnimalLocation(locationData: InsertAnimalLocation): Promise<AnimalLocation> {
-    const [location] = await db.insert(animalLocations).values(locationData).returning();
+    const locationWithId = {
+      ...locationData,
+      id: uuidv4(),
+      recordedAt: new Date(),
+    };
+    const [location] = await db.insert(animalLocations).values(locationWithId).returning();
     return location;
   }
 
@@ -145,7 +155,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createSafeZone(zoneData: InsertSafeZone): Promise<SafeZone> {
-    const [zone] = await db.insert(safeZones).values(zoneData).returning();
+    const zoneWithId = {
+      ...zoneData,
+      id: uuidv4(),
+      createdAt: new Date(),
+    };
+    const [zone] = await db.insert(safeZones).values(zoneWithId).returning();
     return zone;
   }
 
@@ -163,7 +178,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createBooking(bookingData: InsertSafariBooking): Promise<SafariBooking> {
-    const [booking] = await db.insert(safariBookings).values(bookingData).returning();
+    const bookingWithId = {
+      ...bookingData,
+      id: uuidv4(),
+      createdAt: new Date(),
+    };
+    const [booking] = await db.insert(safariBookings).values(bookingWithId).returning();
     return booking;
   }
 
@@ -182,7 +202,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createAlert(alertData: InsertAlert): Promise<Alert> {
-    const [alert] = await db.insert(alerts).values(alertData).returning();
+    const alertWithId = {
+      ...alertData,
+      id: uuidv4(),
+      createdAt: new Date(),
+    };
+    const [alert] = await db.insert(alerts).values(alertWithId).returning();
     return alert;
   }
 

@@ -27,63 +27,56 @@ sqlite.exec(`
     species TEXT NOT NULL,
     age INTEGER,
     gender TEXT,
-    health_status TEXT DEFAULT 'healthy',
-    location TEXT,
-    last_seen TEXT DEFAULT (datetime('now')),
-    description TEXT,
+    identification_marks TEXT,
     image_url TEXT,
-    tracker_id TEXT,
+    parent_id TEXT,
+    status TEXT DEFAULT 'active',
+    last_seen_location TEXT,
+    last_seen_lat REAL,
+    last_seen_lng REAL,
+    last_seen_at TEXT,
     created_at TEXT DEFAULT (datetime('now')),
-    updated_at TEXT DEFAULT (datetime('now'))
+    updated_at TEXT DEFAULT (datetime('now')),
+    FOREIGN KEY (parent_id) REFERENCES animals(id)
   );
 
-  CREATE TABLE IF NOT EXISTS locations (
+  CREATE TABLE IF NOT EXISTS animal_locations (
     id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
     animal_id TEXT NOT NULL,
     latitude REAL NOT NULL,
     longitude REAL NOT NULL,
-    timestamp TEXT DEFAULT (datetime('now')),
-    accuracy REAL,
-    source TEXT,
-    FOREIGN KEY (animal_id) REFERENCES animals(id)
+    location TEXT,
+    recorded_at TEXT DEFAULT (datetime('now')),
+    recorded_by TEXT,
+    FOREIGN KEY (animal_id) REFERENCES animals(id) ON DELETE CASCADE,
+    FOREIGN KEY (recorded_by) REFERENCES users(id)
   );
 
-  CREATE TABLE IF NOT EXISTS bookings (
+  CREATE TABLE IF NOT EXISTS safari_bookings (
     id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
     user_id TEXT NOT NULL,
-    zone TEXT NOT NULL,
-    visit_date TEXT NOT NULL,
-    visitors INTEGER NOT NULL,
-    status TEXT NOT NULL DEFAULT 'pending',
-    notes TEXT,
+    guide_name TEXT NOT NULL,
+    vehicle_type TEXT NOT NULL,
+    date TEXT NOT NULL,
+    time_slot TEXT NOT NULL,
+    number_of_people INTEGER NOT NULL,
+    total_price REAL NOT NULL,
+    status TEXT DEFAULT 'confirmed' NOT NULL,
     created_at TEXT DEFAULT (datetime('now')),
-    updated_at TEXT DEFAULT (datetime('now')),
     FOREIGN KEY (user_id) REFERENCES users(id)
   );
 
   CREATE TABLE IF NOT EXISTS alerts (
     id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-    animal_id TEXT,
-    type TEXT NOT NULL,
-    severity TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    animal_id TEXT NOT NULL,
+    animal_name TEXT NOT NULL,
+    distance REAL NOT NULL,
+    user_area TEXT,
     message TEXT NOT NULL,
-    location TEXT,
-    timestamp TEXT DEFAULT (datetime('now')),
-    resolved INTEGER DEFAULT 0,
-    resolved_at TEXT,
-    resolved_by TEXT,
-    FOREIGN KEY (animal_id) REFERENCES animals(id)
-  );
-
-  CREATE TABLE IF NOT EXISTS safe_zones (
-    id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-    name TEXT NOT NULL,
-    coordinates TEXT NOT NULL,
-    capacity INTEGER,
-    current_count INTEGER DEFAULT 0,
-    status TEXT NOT NULL DEFAULT 'active',
-    description TEXT,
+    is_read INTEGER DEFAULT 0 NOT NULL,
     created_at TEXT DEFAULT (datetime('now')),
-    updated_at TEXT DEFAULT (datetime('now'))
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (animal_id) REFERENCES animals(id)
   );
 `);
