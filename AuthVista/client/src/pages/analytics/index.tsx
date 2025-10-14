@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { TrendingUp, PieChart as PieChartIcon, BarChart3, Activity, Download } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { TrendingUp, PieChart as PieChartIcon, BarChart3, Activity, Download, TreePine, Leaf } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { GlassCard } from '@/components/ui/glass-card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -194,72 +196,80 @@ export default function AnalyticsDashboard() {
   return (
     <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex justify-between items-center"
+      >
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">📊 Analytics Dashboard</h1>
-          <p className="text-gray-600 mt-1">
-            Comprehensive surveillance data analysis and insights
+          <h1 className="text-4xl font-bold text-foreground flex items-center gap-3 font-quicksand">
+            <TreePine className="h-10 w-10 text-primary" />
+            Analytics Dashboard
+          </h1>
+          <p className="text-muted-foreground mt-2 flex items-center gap-2">
+            <Leaf className="h-4 w-4 text-primary/70" />
+            Data-driven insights for wildlife conservation
           </p>
         </div>
-        <Button className="gap-2">
+        <Button className="glass-button gap-2">
           <Download className="h-4 w-4" />
           Export Report
         </Button>
-      </div>
+      </motion.div>
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
+        <GlassCard strength="medium" animated>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Detections</CardTitle>
-            <Activity className="h-4 w-4 text-blue-600" />
+            <TreePine className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalDetections}</div>
-            <p className="text-xs text-gray-600 mt-1">Last 7 days</p>
+            <p className="text-xs text-muted-foreground mt-1">Last 7 days</p>
           </CardContent>
-        </Card>
+        </GlassCard>
 
-        <Card>
+        <GlassCard strength="medium" animated>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Critical Alerts</CardTitle>
-            <Activity className="h-4 w-4 text-red-600" />
+            <Activity className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.criticalAlerts}</div>
-            <p className="text-xs text-gray-600 mt-1">Requires action</p>
+            <div className="text-2xl font-bold text-red-500">{stats.criticalAlerts}</div>
+            <p className="text-xs text-muted-foreground mt-1">Requires action</p>
           </CardContent>
-        </Card>
+        </GlassCard>
 
-        <Card>
+        <GlassCard strength="medium" animated>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Avg Per Day</CardTitle>
-            <TrendingUp className="h-4 w-4 text-green-600" />
+            <TrendingUp className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.avgPerDay}</div>
-            <p className="text-xs text-gray-600 mt-1">Detection rate</p>
+            <p className="text-xs text-muted-foreground mt-1">Detection rate</p>
           </CardContent>
-        </Card>
+        </GlassCard>
 
-        <Card>
+        <GlassCard strength="medium" animated>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Weapons Detected</CardTitle>
-            <Activity className="h-4 w-4 text-orange-600" />
+            <Leaf className="h-4 w-4 text-orange-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">{stats.weaponsDetected}</div>
-            <p className="text-xs text-gray-600 mt-1">High priority</p>
+            <div className="text-2xl font-bold text-orange-500">{stats.weaponsDetected}</div>
+            <p className="text-xs text-muted-foreground mt-1">High priority</p>
           </CardContent>
-        </Card>
+        </GlassCard>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Detection Trends */}
-        <Card>
+        <GlassCard strength="light">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5" />
+              <TrendingUp className="h-5 w-5 text-primary" />
               Detection Trends (7 Days)
             </CardTitle>
             <CardDescription>Daily detection counts by threat level</CardDescription>
@@ -279,13 +289,13 @@ export default function AnalyticsDashboard() {
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
-        </Card>
+        </GlassCard>
 
         {/* Threat Distribution */}
-        <Card>
+        <GlassCard strength="light">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <PieChartIcon className="h-5 w-5" />
+              <PieChartIcon className="h-5 w-5 text-primary" />
               Threat Level Distribution
             </CardTitle>
             <CardDescription>Breakdown of threats by severity</CardDescription>
@@ -311,13 +321,13 @@ export default function AnalyticsDashboard() {
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
-        </Card>
+        </GlassCard>
 
         {/* Top Cameras */}
-        <Card>
+        <GlassCard strength="light">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5" />
+              <BarChart3 className="h-5 w-5 text-primary" />
               Top 5 Cameras
             </CardTitle>
             <CardDescription>Most active surveillance cameras</CardDescription>
@@ -330,22 +340,22 @@ export default function AnalyticsDashboard() {
                   <XAxis type="number" />
                   <YAxis type="category" dataKey="name" width={100} />
                   <Tooltip />
-                  <Bar dataKey="detections" fill="#3b82f6" />
+                  <Bar dataKey="detections" fill="hsl(var(--primary))" />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <div className="text-center py-12 text-gray-500">
+              <div className="text-center py-12 text-muted-foreground">
                 No camera data available
               </div>
             )}
           </CardContent>
-        </Card>
+        </GlassCard>
 
         {/* Object Types */}
-        <Card>
+        <GlassCard strength="light">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Activity className="h-5 w-5" />
+              <Activity className="h-5 w-5 text-primary" />
               Detected Object Types
             </CardTitle>
             <CardDescription>Most frequently detected objects</CardDescription>
@@ -358,23 +368,23 @@ export default function AnalyticsDashboard() {
                   <XAxis dataKey="name" />
                   <YAxis />
                   <Tooltip />
-                  <Bar dataKey="count" fill="#22c55e" />
+                  <Bar dataKey="count" fill="hsl(var(--primary))" />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <div className="text-center py-12 text-gray-500">
+              <div className="text-center py-12 text-muted-foreground">
                 No detection data available
               </div>
             )}
           </CardContent>
-        </Card>
+        </GlassCard>
       </div>
 
       {/* Hourly Activity Heatmap */}
-      <Card>
+      <GlassCard strength="light">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Activity className="h-5 w-5" />
+            <Activity className="h-5 w-5 text-primary" />
             24-Hour Activity Pattern
           </CardTitle>
           <CardDescription>Detection activity by hour of day</CardDescription>
@@ -386,51 +396,66 @@ export default function AnalyticsDashboard() {
               <XAxis dataKey="hour" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="detections" fill="#8b5cf6" />
+              <Bar dataKey="detections" fill="hsl(var(--primary))" />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
-      </Card>
+      </GlassCard>
 
       {/* Insights */}
-      <Card>
+      <GlassCard strength="medium">
         <CardHeader>
-          <CardTitle>💡 Key Insights</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Leaf className="h-5 w-5 text-primary" />
+            Key Insights
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 bg-blue-50 rounded-lg">
-              <h4 className="font-semibold text-blue-900 mb-2">Peak Activity</h4>
-              <p className="text-sm text-blue-800">
+            <div className="p-4 glass-card rounded-lg">
+              <h4 className="font-semibold mb-2 flex items-center gap-2">
+                <TreePine className="h-4 w-4 text-primary" />
+                Peak Activity
+              </h4>
+              <p className="text-sm text-muted-foreground">
                 Most detections occur during{' '}
-                <strong>
+                <strong className="text-foreground">
                   {hourlyData.reduce((max, hour) => 
                     hour.detections > max.detections ? hour : max
                   ).hour}
                 </strong>
               </p>
             </div>
-            <div className="p-4 bg-green-50 rounded-lg">
-              <h4 className="font-semibold text-green-900 mb-2">Detection Rate</h4>
-              <p className="text-sm text-green-800">
-                Average of <strong>{stats.avgPerDay}</strong> detections per day over the last week
+            <div className="p-4 glass-card rounded-lg">
+              <h4 className="font-semibold mb-2 flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-green-500" />
+                Detection Rate
+              </h4>
+              <p className="text-sm text-muted-foreground">
+                Average of <strong className="text-foreground">{stats.avgPerDay}</strong> detections per day over the last week
               </p>
             </div>
-            <div className="p-4 bg-red-50 rounded-lg">
-              <h4 className="font-semibold text-red-900 mb-2">Security Threats</h4>
-              <p className="text-sm text-red-800">
-                <strong>{stats.weaponsDetected}</strong> weapon detections require immediate attention
+            <div className="p-4 glass-card rounded-lg">
+              <h4 className="font-semibold mb-2 flex items-center gap-2">
+                <Activity className="h-4 w-4 text-red-500" />
+                Security Threats
+              </h4>
+              <p className="text-sm text-muted-foreground">
+                <strong className="text-red-500">{stats.weaponsDetected}</strong> weapon detections require immediate attention
               </p>
             </div>
-            <div className="p-4 bg-purple-50 rounded-lg">
-              <h4 className="font-semibold text-purple-900 mb-2">Camera Coverage</h4>
-              <p className="text-sm text-purple-800">
-                <strong>{cameras.length}</strong> cameras deployed across Tadoba reserve
+            <div className="p-4 glass-card rounded-lg">
+              <h4 className="font-semibold mb-2 flex items-center gap-2">
+                <Leaf className="h-4 w-4 text-primary" />
+                Camera Coverage
+              </h4>
+              <p className="text-sm text-muted-foreground">
+                <strong className="text-foreground">{cameras.length}</strong> cameras deployed across Tadoba reserve
               </p>
             </div>
           </div>
         </CardContent>
-      </Card>
+      </GlassCard>
     </div>
   );
 }
