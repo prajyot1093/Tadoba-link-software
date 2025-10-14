@@ -1,9 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
-import { Shield, PawPrint, AlertTriangle, Calendar, MapPin } from "lucide-react";
+import { Shield, PawPrint, AlertTriangle, Calendar, MapPin, TreePine, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
+import { motion } from "framer-motion";
+import { GlassCard } from "@/components/ui/glass-card";
 import type { Animal, Alert, SafariBooking } from "@shared/schema";
 
 export default function LocalDashboard() {
@@ -30,81 +32,91 @@ export default function LocalDashboard() {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center justify-between flex-wrap gap-4"
+      >
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Welcome, {user?.firstName}!</h1>
-          <p className="text-muted-foreground mt-1">Stay safe and informed about wildlife in your area</p>
+          <h1 className="text-4xl font-bold flex items-center gap-3 font-quicksand">
+            <TreePine className="h-10 w-10 text-primary" />
+            Welcome, {user?.firstName}!
+          </h1>
+          <p className="text-muted-foreground mt-2 flex items-center gap-2">
+            <Leaf className="h-4 w-4 text-primary/70" />
+            Stay safe and informed about wildlife in your area
+          </p>
         </div>
-      </div>
+      </motion.div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-card/50 backdrop-blur-sm border-card-border hover-elevate">
+        <GlassCard strength="medium" animated>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-card-foreground">Nearby Wildlife</CardTitle>
+            <CardTitle className="text-sm font-medium">Nearby Wildlife</CardTitle>
             <PawPrint className="w-4 h-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground" data-testid="stat-nearby-animals">
+            <div className="text-2xl font-bold" data-testid="stat-nearby-animals">
               {nearbyAnimals.length}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               Animals tracked nearby
             </p>
           </CardContent>
-        </Card>
+        </GlassCard>
 
-        <Card className="bg-card/50 backdrop-blur-sm border-card-border hover-elevate">
+        <GlassCard strength="medium" animated>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-card-foreground">Alerts</CardTitle>
+            <CardTitle className="text-sm font-medium">Alerts</CardTitle>
             <AlertTriangle className="w-4 h-4 text-destructive" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground" data-testid="stat-unread-alerts">
+            <div className="text-2xl font-bold" data-testid="stat-unread-alerts">
               {unreadAlerts}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               Unread proximity alerts
             </p>
           </CardContent>
-        </Card>
+        </GlassCard>
 
-        <Card className="bg-card/50 backdrop-blur-sm border-card-border hover-elevate">
+        <GlassCard strength="medium" animated>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-card-foreground">Safe Zones</CardTitle>
+            <CardTitle className="text-sm font-medium">Safe Zones</CardTitle>
             <Shield className="w-4 h-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">Active</div>
+            <div className="text-2xl font-bold">Active</div>
             <p className="text-xs text-muted-foreground mt-1">
               Grazing areas protected
             </p>
           </CardContent>
-        </Card>
+        </GlassCard>
 
-        <Card className="bg-card/50 backdrop-blur-sm border-card-border hover-elevate">
+        <GlassCard strength="medium" animated>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-card-foreground">Bookings</CardTitle>
-            <Calendar className="w-4 h-4 text-orange" />
+            <CardTitle className="text-sm font-medium">Bookings</CardTitle>
+            <Calendar className="w-4 h-4 text-orange-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground" data-testid="stat-bookings">
+            <div className="text-2xl font-bold" data-testid="stat-bookings">
               {upcomingBookings.length}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               Upcoming safari tours
             </p>
           </CardContent>
-        </Card>
+        </GlassCard>
       </div>
 
       {/* Main Content */}
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Recent Alerts */}
-        <Card className="bg-card/50 backdrop-blur-sm border-card-border">
+        <GlassCard strength="light">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-card-foreground">Recent Alerts</CardTitle>
+              <CardTitle>Recent Alerts</CardTitle>
               <Button variant="ghost" size="sm" asChild>
                 <Link href="/safe-zones">View Map</Link>
               </Button>
@@ -144,12 +156,12 @@ export default function LocalDashboard() {
               </div>
             )}
           </CardContent>
-        </Card>
+        </GlassCard>
 
         {/* Quick Actions */}
-        <Card className="bg-card/50 backdrop-blur-sm border-card-border">
+        <GlassCard strength="light">
           <CardHeader>
-            <CardTitle className="text-card-foreground">Quick Actions</CardTitle>
+            <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <Link href="/safe-zones">
@@ -193,13 +205,16 @@ export default function LocalDashboard() {
               </Button>
             </Link>
           </CardContent>
-        </Card>
+        </GlassCard>
       </div>
 
       {/* Wildlife Safety Tips */}
-      <Card className="bg-gradient-to-r from-primary/10 to-orange/10 border-primary/20 backdrop-blur-sm">
+      <GlassCard strength="medium" glow>
         <CardHeader>
-          <CardTitle className="text-card-foreground">Wildlife Safety Tips</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <TreePine className="h-5 w-5 text-primary" />
+            Wildlife Safety Tips
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="space-y-2 text-sm text-muted-foreground">
@@ -217,7 +232,7 @@ export default function LocalDashboard() {
             </li>
           </ul>
         </CardContent>
-      </Card>
+      </GlassCard>
     </div>
   );
 }
