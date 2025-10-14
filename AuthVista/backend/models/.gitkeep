@@ -1,0 +1,17 @@
+# Models Directory
+
+This directory stores YOLO model weights.
+
+## Download Model
+
+Run the download script:
+```bash
+cd ../inference
+python download_model.py
+```
+
+This will download `yolov8n.pt` (~6 MB) to this directory.
+
+## Note
+
+Model files (*.pt) are gitignored to avoid bloating the repository.
