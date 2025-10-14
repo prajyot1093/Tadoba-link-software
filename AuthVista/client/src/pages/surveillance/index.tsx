@@ -133,10 +133,18 @@ export default function SurveillanceDashboard() {
             Real-time wildlife conservation monitoring with YOLO detection
           </p>
         </div>
-        <Button className="glass-button gap-2 h-11 px-6" onClick={() => setAddCameraOpen(true)}>
-          <Plus className="h-4 w-4" />
-          Add Camera
-        </Button>
+        <div className="flex gap-3">
+          <Link href="/surveillance/real-time">
+            <Button className="glass-button gap-2 h-11 px-6" variant="default">
+              <Camera className="h-4 w-4" />
+              Live Webcam
+            </Button>
+          </Link>
+          <Button className="glass-button gap-2 h-11 px-6" onClick={() => setAddCameraOpen(true)}>
+            <Plus className="h-4 w-4" />
+            Add Camera
+          </Button>
+        </div>
       </motion.div>
 
       {/* Statistics Cards */}

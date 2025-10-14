@@ -22,6 +22,7 @@ import TigerTracker from "@/pages/tiger-tracker";
 import SafeZones from "@/pages/safe-zones";
 import SurveillanceDashboard from "@/pages/surveillance";
 import DetectionDetail from "@/pages/surveillance/detection-detail";
+import SurveillanceRealTime from "@/pages/surveillance/real-time";
 import AnalyticsDashboard from "@/pages/analytics";
 import SettingsPage from "@/pages/settings";
 
@@ -42,6 +43,7 @@ function Router() {
               <Route path="/chat" component={Chat} />
               <Route path="/bookings" component={Bookings} />
               <Route path="/surveillance" component={SurveillanceDashboard} />
+              <Route path="/surveillance/real-time" component={SurveillanceRealTime} />
               <Route path="/surveillance/detection/:id" component={DetectionDetail} />
               <Route path="/analytics" component={AnalyticsDashboard} />
               <Route path="/settings" component={SettingsPage} />
@@ -54,6 +56,7 @@ function Router() {
               <Route path="/chat" component={Chat} />
               <Route path="/safari" component={SafariBooking} />
               <Route path="/surveillance" component={SurveillanceDashboard} />
+              <Route path="/surveillance/real-time" component={SurveillanceRealTime} />
               <Route path="/surveillance/detection/:id" component={DetectionDetail} />
               <Route path="/analytics" component={AnalyticsDashboard} />
               <Route path="/settings" component={SettingsPage} />
