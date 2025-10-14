@@ -566,5 +566,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Settings routes
+  const settingsRouter = await import('./routes/settings');
+  app.use('/api/settings', settingsRouter.default);
+
   return httpServer;
 }

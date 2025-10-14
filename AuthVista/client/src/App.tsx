@@ -21,6 +21,7 @@ import SafeZones from "@/pages/safe-zones";
 import SurveillanceDashboard from "@/pages/surveillance";
 import DetectionDetail from "@/pages/surveillance/detection-detail";
 import AnalyticsDashboard from "@/pages/analytics";
+import SettingsPage from "@/pages/settings";
 
 function Router() {
   const { isAuthenticated, isLoading, isDepartment } = useAuth();
@@ -41,6 +42,7 @@ function Router() {
               <Route path="/surveillance" component={SurveillanceDashboard} />
               <Route path="/surveillance/detection/:id" component={DetectionDetail} />
               <Route path="/analytics" component={AnalyticsDashboard} />
+              <Route path="/settings" component={SettingsPage} />
             </>
           ) : (
             <>
@@ -52,6 +54,7 @@ function Router() {
               <Route path="/surveillance" component={SurveillanceDashboard} />
               <Route path="/surveillance/detection/:id" component={DetectionDetail} />
               <Route path="/analytics" component={AnalyticsDashboard} />
+              <Route path="/settings" component={SettingsPage} />
             </>
           )}
         </>

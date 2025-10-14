@@ -1,4 +1,4 @@
-import { Home, Map, MessageSquare, PawPrint, Calendar, Plus, Bell, Camera, BarChart3 } from "lucide-react";
+import { Home, Map, MessageSquare, PawPrint, Calendar, Plus, Bell, Camera, BarChart3, Settings } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -56,6 +56,11 @@ export function AppSidebar() {
       url: "/bookings",
       icon: Calendar,
     },
+    {
+      title: "Settings",
+      url: "/settings",
+      icon: Settings,
+    },
   ];
 
   const localItems = [
@@ -73,6 +78,11 @@ export function AppSidebar() {
       title: "Analytics",
       url: "/analytics",
       icon: BarChart3,
+    },
+    {
+      title: "Settings",
+      url: "/settings",
+      icon: Settings,
     },
     {
       title: "Safe Zones",
