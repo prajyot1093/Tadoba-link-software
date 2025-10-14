@@ -1,4 +1,5 @@
 import { Switch, Route } from "wouter";
+import { lazy, Suspense } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -10,43 +11,55 @@ import { ForestParticles } from "@/components/ui/forest-background";
 import { useAuth } from "@/hooks/useAuth";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import NotFound from "@/pages/not-found";
-import Landing from "@/pages/landing";
-import DepartmentDashboard from "@/pages/department-dashboard";
-import LocalDashboard from "@/pages/local-dashboard";
-import Animals from "@/pages/animals";
-import MapView from "@/pages/map";
-import Chat from "@/pages/chat";
-import SafariBooking from "@/pages/safari-booking";
-import Bookings from "@/pages/bookings";
-import TigerTracker from "@/pages/tiger-tracker";
-import SafeZones from "@/pages/safe-zones";
-import SurveillanceDashboard from "@/pages/surveillance";
-import DetectionDetail from "@/pages/surveillance/detection-detail";
-import SurveillanceRealTime from "@/pages/surveillance/real-time";
-import AnalyticsDashboard from "@/pages/analytics";
-import SettingsPage from "@/pages/settings";
+
+// Lazy-loaded route components for better code splitting
+const Landing = lazy(() => import("@/pages/landing"));
+const DepartmentDashboard = lazy(() => import("@/pages/department-dashboard"));
+const LocalDashboard = lazy(() => import("@/pages/local-dashboard"));
+const Animals = lazy(() => import("@/pages/animals"));
+const MapView = lazy(() => import("@/pages/map"));
+const Chat = lazy(() => import("@/pages/chat"));
+const SafariBooking = lazy(() => import("@/pages/safari-booking"));
+const Bookings = lazy(() => import("@/pages/bookings"));
+const TigerTracker = lazy(() => import("@/pages/tiger-tracker"));
+const SafeZones = lazy(() => import("@/pages/safe-zones"));
+const SurveillanceDashboard = lazy(() => import("@/pages/surveillance"));
+const DetectionDetail = lazy(() => import("@/pages/surveillance/detection-detail"));
+const SurveillanceRealTime = lazy(() => import("@/pages/surveillance/real-time"));
+const AnalyticsDashboard = lazy(() => import("@/pages/analytics"));
+const SettingsPage = lazy(() => import("@/pages/settings"));
+
+// Loading fallback component
+function PageLoader() {
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+    </div>
+  );
+}
 
 function Router() {
   const { isAuthenticated, isLoading, isDepartment } = useAuth();
 
   return (
-    <Switch>
-      {isLoading || !isAuthenticated ? (
-        <Route path="/" component={Landing} />
-      ) : (
-        <>
-          {isDepartment ? (
-            <>
-              <Route path="/" component={DepartmentDashboard} />
-              <Route path="/animals" component={Animals} />
-              <Route path="/map" component={MapView} />
-              <Route path="/chat" component={Chat} />
-              <Route path="/bookings" component={Bookings} />
-              <Route path="/surveillance" component={SurveillanceDashboard} />
-              <Route path="/surveillance/real-time" component={SurveillanceRealTime} />
-              <Route path="/surveillance/detection/:id" component={DetectionDetail} />
-              <Route path="/analytics" component={AnalyticsDashboard} />
-              <Route path="/settings" component={SettingsPage} />
+    <Suspense fallback={<PageLoader />}>
+      <Switch>
+        {isLoading || !isAuthenticated ? (
+          <Route path="/" component={Landing} />
+        ) : (
+          <>
+            {isDepartment ? (
+              <>
+                <Route path="/" component={DepartmentDashboard} />
+                <Route path="/animals" component={Animals} />
+                <Route path="/map" component={MapView} />
+                <Route path="/chat" component={Chat} />
+                <Route path="/bookings" component={Bookings} />
+                <Route path="/surveillance" component={SurveillanceDashboard} />
+                <Route path="/surveillance/real-time" component={SurveillanceRealTime} />
+                <Route path="/surveillance/detection/:id" component={DetectionDetail} />
+                <Route path="/analytics" component={AnalyticsDashboard} />
+                <Route path="/settings" component={SettingsPage} />
             </>
           ) : (
             <>
@@ -66,6 +79,7 @@ function Router() {
       )}
       <Route component={NotFound} />
     </Switch>
+    </Suspense>
   );
 }
 
