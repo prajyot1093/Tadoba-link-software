@@ -1,0 +1,8 @@
+# Ignore YOLO model weights (too large for Git)
+*.pt
+*.pth
+*.onnx
+*.engine
+
+# Keep directory structure
+!.gitkeep

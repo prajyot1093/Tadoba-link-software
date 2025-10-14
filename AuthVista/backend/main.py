@@ -173,25 +173,76 @@ def health_check():
 
 # ==================== WEBSOCKET ====================
 
+# Connected workers tracking
+connected_workers = {}
+
 @sio.event
 async def connect(sid, environ):
     """Client connected to WebSocket"""
-    print(f"Client {sid} connected")
+    print(f"✅ Client {sid} connected")
     await sio.emit('connection', {'status': 'connected'}, room=sid)
 
 @sio.event
 async def disconnect(sid):
     """Client disconnected"""
-    print(f"Client {sid} disconnected")
+    print(f"⚠️ Client {sid} disconnected")
+    # Remove from workers if it was a worker
+    if sid in connected_workers:
+        worker_info = connected_workers.pop(sid)
+        print(f"🔌 Worker disconnected: {worker_info['worker_type']}")
+
+@sio.event
+async def worker_ready(sid, data):
+    """Inference worker registered"""
+    connected_workers[sid] = data
+    print(f"🤖 Worker ready: {data['worker_type']} (sid: {sid})")
+    print(f"   Model: {data.get('model', 'unknown')}")
+    print(f"   Confidence: {data.get('confidence_threshold', 'unknown')}")
+    await sio.emit('worker:registered', {'status': 'registered', 'sid': sid}, room=sid)
+
+@sio.event
+async def frame_ingest(sid, data):
+    """
+    Frame received from webcam/RTSP for inference
+    Forward to inference worker
+    """
+    # Broadcast to all connected inference workers
+    worker_count = len([w for w in connected_workers.values() if w.get('worker_type') == 'yolo_inference'])
+    
+    if worker_count == 0:
+        print(f"⚠️ No inference workers available")
+        await sio.emit('error', {'message': 'No inference workers available'}, room=sid)
+        return
+    
+    # Forward frame to inference workers
+    await sio.emit('frame:ingest', data)
+
+@sio.event
+async def detection_created(sid, data):
+    """
+    Detection result from inference worker
+    Broadcast to all clients
+    """
+    print(f"🎯 Detection broadcast: {data.get('detection_class')} "
+          f"({data.get('confidence', 0):.2%})")
+    await sio.emit('detection:created', data)
+
+@sio.event
+async def frame_processed(sid, data):
+    """
+    Frame processing completed
+    Broadcast results to clients
+    """
+    await sio.emit('frame:processed', data)
 
 # Function to broadcast detection events (called from inference worker)
 async def broadcast_detection(detection_data: dict):
     """Broadcast detection to all connected clients"""
-    await sio.emit('detection:create', detection_data)
+    await sio.emit('detection:created', detection_data)
 
 async def broadcast_alert(alert_data: dict):
     """Broadcast alert to all connected clients"""
-    await sio.emit('alert:create', alert_data)
+    await sio.emit('alert:created', alert_data)
 
 # ==================== RUN ====================
 
