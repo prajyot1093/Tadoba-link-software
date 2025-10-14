@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Upload, Camera, Loader2, X, AlertTriangle } from 'lucide-react';
 import {
@@ -46,7 +46,7 @@ interface DetectionResult {
   timestamp: string;
 }
 
-export function UploadImageModal({ open, onOpenChange }: UploadImageModalProps) {
+export const UploadImageModal = memo(function UploadImageModal({ open, onOpenChange }: UploadImageModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
@@ -332,4 +332,4 @@ export function UploadImageModal({ open, onOpenChange }: UploadImageModalProps) 
       </DialogContent>
     </Dialog>
   );
-}
+});

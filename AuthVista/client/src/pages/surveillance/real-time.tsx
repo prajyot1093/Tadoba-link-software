@@ -92,7 +92,9 @@ export default function SurveillanceRealTime() {
     
     socket.on('connect', () => {
       setIsConnected(true);
-      console.log('✅ Connected to backend');
+      if (import.meta.env.DEV) {
+        console.log('✅ Connected to backend');
+      }
       toast({
         title: 'Connected',
         description: 'Socket.IO connection established',
@@ -101,7 +103,9 @@ export default function SurveillanceRealTime() {
     
     socket.on('disconnect', () => {
       setIsConnected(false);
-      console.log('⚠️ Disconnected from backend');
+      if (import.meta.env.DEV) {
+        console.log('⚠️ Disconnected from backend');
+      }
       toast({
         title: 'Disconnected',
         description: 'Connection lost. Attempting to reconnect...',
@@ -110,7 +114,9 @@ export default function SurveillanceRealTime() {
     });
     
     socket.on('detection:created', (detection: Detection) => {
-      console.log('🎯 Detection received:', detection);
+      if (import.meta.env.DEV) {
+        console.log('🎯 Detection received:', detection);
+      }
       
       setDetections(prev => [detection, ...prev].slice(0, 50)); // Keep last 50
       setStats(prev => ({
@@ -141,11 +147,13 @@ export default function SurveillanceRealTime() {
       }
     });
     
-    socket.on('error', (error: any) => {
-      console.error('❌ Socket error:', error);
+    socket.on('error', (error: Error | { message?: string }) => {
+      if (import.meta.env.DEV) {
+        console.error('❌ Socket error:', error);
+      }
       toast({
         title: 'Error',
-        description: error.message || 'Socket.IO error occurred',
+        description: (error instanceof Error ? error.message : error.message) || 'Socket.IO error occurred',
         variant: 'destructive'
       });
     });
@@ -183,7 +191,9 @@ export default function SurveillanceRealTime() {
       
       return true;
     } catch (error) {
-      console.error('❌ Webcam error:', error);
+      if (import.meta.env.DEV) {
+        console.error('❌ Webcam error:', error);
+      }
       toast({
         title: 'Webcam Error',
         description: 'Failed to access camera. Please check permissions.',

@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, memo } from "react";
 import { motion } from "framer-motion";
 
-export function ForestBackground({ children, blur = true }: { children: React.ReactNode; blur?: boolean }) {
+export const ForestBackground = memo(function ForestBackground({ children, blur = true }: { children: React.ReactNode; blur?: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -68,9 +68,9 @@ export function ForestBackground({ children, blur = true }: { children: React.Re
       </motion.div>
     </div>
   );
-}
+});
 
-export function ForestParticles() {
+export const ForestParticles = memo(function ForestParticles() {
   return (
     <div className="fixed inset-0 pointer-events-none z-10 overflow-hidden">
       {/* Floating light particles */}
@@ -96,4 +96,4 @@ export function ForestParticles() {
       ))}
     </div>
   );
-}
+});

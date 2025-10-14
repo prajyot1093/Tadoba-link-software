@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, memo } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -36,7 +36,7 @@ interface SurveillanceMapProps {
   onCameraSelect: (cameraId: string | null) => void;
 }
 
-export function SurveillanceMap({ cameras, detections, selectedCamera, onCameraSelect }: SurveillanceMapProps) {
+export const SurveillanceMap = memo(function SurveillanceMap({ cameras, detections, selectedCamera, onCameraSelect }: SurveillanceMapProps) {
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
 
@@ -269,4 +269,4 @@ export function SurveillanceMap({ cameras, detections, selectedCamera, onCameraS
       </CardContent>
     </Card>
   );
-}
+});

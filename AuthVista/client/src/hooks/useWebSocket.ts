@@ -26,7 +26,9 @@ export function useWebSocket({ isAuthenticated }: UseWebSocketProps) {
       wsRef.current = ws;
 
       ws.onopen = () => {
-        console.log("WebSocket connected for real-time alerts");
+        if (import.meta.env.DEV) {
+          console.log("WebSocket connected for real-time alerts");
+        }
       };
 
       ws.onmessage = (event) => {
@@ -56,25 +58,35 @@ export function useWebSocket({ isAuthenticated }: UseWebSocketProps) {
             queryClient.invalidateQueries({ queryKey: ["/api/alerts/recent"] });
           }
         } catch (error) {
-          console.error("Error parsing WebSocket message:", error);
+          if (import.meta.env.DEV) {
+            console.error("Error parsing WebSocket message:", error);
+          }
         }
       };
 
       ws.onerror = (error) => {
-        console.error("WebSocket error:", error);
+        if (import.meta.env.DEV) {
+          console.error("WebSocket error:", error);
+        }
       };
 
       ws.onclose = () => {
-        console.log("WebSocket disconnected");
+        if (import.meta.env.DEV) {
+          console.log("WebSocket disconnected");
+        }
         
         // Only auto-reconnect if we should (user still authenticated, component still mounted)
         if (shouldReconnectRef.current) {
-          console.log("Reconnecting in 5s...");
+          if (import.meta.env.DEV) {
+            console.log("Reconnecting in 5s...");
+          }
           reconnectTimeoutRef.current = setTimeout(connect, 5000);
         }
       };
     } catch (error) {
-      console.error("WebSocket connection error:", error);
+      if (import.meta.env.DEV) {
+        console.error("WebSocket connection error:", error);
+      }
     }
   }, [toast]);
 

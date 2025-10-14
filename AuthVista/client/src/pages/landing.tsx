@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { PawPrint, Shield, MapPin, Sparkles, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AuthModal } from "@/components/auth-modal";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 export default function Landing() {
   const [leaves, setLeaves] = useState<Array<{ id: number; left: string; delay: string }>>([]);
@@ -67,7 +67,11 @@ export default function Landing() {
                 <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className="sm:max-w-[500px]" aria-describedby="login-dialog-description">
+              <DialogTitle className="sr-only">Login to Tadoba Conservation Platform</DialogTitle>
+              <DialogDescription id="login-dialog-description" className="sr-only">
+                Enter your credentials to access the wildlife conservation dashboard
+              </DialogDescription>
               <AuthModal />
             </DialogContent>
           </Dialog>
@@ -109,7 +113,11 @@ export default function Landing() {
                     <ChevronRight className="w-5 h-5 ml-2" />
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[500px]">
+                <DialogContent className="sm:max-w-[500px]" aria-describedby="get-started-dialog-description">
+                  <DialogTitle className="sr-only">Get Started with Tadoba Conservation</DialogTitle>
+                  <DialogDescription id="get-started-dialog-description" className="sr-only">
+                    Create an account or login to start using the wildlife conservation platform
+                  </DialogDescription>
                   <AuthModal />
                 </DialogContent>
               </Dialog>

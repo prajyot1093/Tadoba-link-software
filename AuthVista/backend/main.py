@@ -10,6 +10,7 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from typing import List, Optional
 import os
+import logging
 from dotenv import load_dotenv
 
 from database import get_db, init_db
@@ -18,6 +19,14 @@ from schemas import UserCreate, UserResponse, Token, UserLogin
 import socketio
 
 load_dotenv()
+
+# ==================== LOGGING ====================
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 # ==================== CONFIGURATION ====================
 
@@ -29,13 +38,17 @@ CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://localhost
 
 # ==================== SECURITY ====================
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto", bcrypt__rounds=12)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 def get_password_hash(password: str) -> str:
+    # Bcrypt has a 72-byte limit - truncate password if needed
+    # Encode to bytes, take first 72 bytes, decode back to string
+    if len(password.encode('utf-8')) > 72:
+        password = password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
     return pwd_context.hash(password)
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
@@ -97,43 +110,77 @@ socket_app = socketio.ASGIApp(sio, app)
 async def startup_event():
     """Initialize database on startup"""
     init_db()
-    print("✅ Database initialized")
+    logger.info("Database initialized")
     
     # Register API routes
     from routes import geofences, cameras, detections
     app.include_router(geofences.router)
     app.include_router(cameras.router)
     app.include_router(detections.router)
-    print("✅ API routes registered")
-    print("✅ FastAPI server ready")
+    logger.info("API routes registered")
+    logger.info("FastAPI server ready")
 
 # ==================== AUTH ROUTES ====================
 
-@app.post("/api/auth/register", response_model=UserResponse)
+@app.post("/api/auth/register")
 def register(user: UserCreate, db: Session = Depends(get_db)):
-    """Register a new user"""
-    # Check if user exists
-    db_user = db.query(User).filter(User.email == user.email).first()
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    
-    db_user = db.query(User).filter(User.username == user.username).first()
-    if db_user:
-        raise HTTPException(status_code=400, detail="Username already taken")
-    
-    # Create new user
-    hashed_password = get_password_hash(user.password)
-    db_user = User(
-        email=user.email,
-        username=user.username,
-        full_name=user.full_name,
-        hashed_password=hashed_password,
-        role=user.role
-    )
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
+    """Register a new user and return access token"""
+    try:
+        # Check if user exists
+        db_user = db.query(User).filter(User.email == user.email).first()
+        if db_user:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        
+        db_user = db.query(User).filter(User.username == user.username).first()
+        if db_user:
+            raise HTTPException(status_code=400, detail="Username already taken")
+        
+        # Convert Pydantic enum to SQLAlchemy enum
+        from models import UserRole as UserRoleModel
+        role_value = user.role if isinstance(user.role, str) else user.role.value
+        role_mapping = {
+            "admin": UserRoleModel.ADMIN,
+            "ranger": UserRoleModel.RANGER,
+            "viewer": UserRoleModel.VIEWER,
+            "local": UserRoleModel.LOCAL
+        }
+        db_role = role_mapping.get(role_value.lower(), UserRoleModel.VIEWER)
+        
+        # Create new user
+        hashed_password = get_password_hash(user.password)
+        db_user = User(
+            email=user.email,
+            username=user.username,
+            full_name=user.full_name,
+            hashed_password=hashed_password,
+            role=db_role  # Use mapped enum value
+        )
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+        
+        # Generate access token for the new user
+        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = create_access_token(
+            data={"sub": db_user.username}, expires_delta=access_token_expires
+        )
+        
+        # Return user info and token
+        return {
+            "user": {
+                "id": str(db_user.id),
+                "email": db_user.email,
+                "firstName": db_user.full_name.split()[0] if db_user.full_name else "",
+                "lastName": " ".join(db_user.full_name.split()[1:]) if db_user.full_name and len(db_user.full_name.split()) > 1 else "",
+                "role": db_user.role.value if hasattr(db_user.role, 'value') else str(db_user.role)
+            },
+            "token": access_token
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Registration error: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Registration failed: {str(e)}")
 
 @app.post("/api/auth/login", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
@@ -160,6 +207,11 @@ async def read_users_me(current_user: User = Depends(get_current_user)):
     """Get current user info"""
     return current_user
 
+@app.get("/api/auth/user", response_model=UserResponse)
+async def get_current_user_info(current_user: User = Depends(get_current_user)):
+    """Get current user info (alias for /me)"""
+    return current_user
+
 # ==================== HEALTH CHECK ====================
 
 @app.get("/health")
@@ -179,25 +231,25 @@ connected_workers = {}
 @sio.event
 async def connect(sid, environ):
     """Client connected to WebSocket"""
-    print(f"✅ Client {sid} connected")
+    logger.info(f"Client {sid} connected")
     await sio.emit('connection', {'status': 'connected'}, room=sid)
 
 @sio.event
 async def disconnect(sid):
     """Client disconnected"""
-    print(f"⚠️ Client {sid} disconnected")
+    logger.info(f"Client {sid} disconnected")
     # Remove from workers if it was a worker
     if sid in connected_workers:
         worker_info = connected_workers.pop(sid)
-        print(f"🔌 Worker disconnected: {worker_info['worker_type']}")
+        logger.info(f"Worker disconnected: {worker_info['worker_type']}")
 
 @sio.event
 async def worker_ready(sid, data):
     """Inference worker registered"""
     connected_workers[sid] = data
-    print(f"🤖 Worker ready: {data['worker_type']} (sid: {sid})")
-    print(f"   Model: {data.get('model', 'unknown')}")
-    print(f"   Confidence: {data.get('confidence_threshold', 'unknown')}")
+    logger.info(f"Worker ready: {data['worker_type']} (sid: {sid})")
+    logger.info(f"  Model: {data.get('model', 'unknown')}")
+    logger.info(f"  Confidence: {data.get('confidence_threshold', 'unknown')}")
     await sio.emit('worker:registered', {'status': 'registered', 'sid': sid}, room=sid)
 
 @sio.event
@@ -210,7 +262,7 @@ async def frame_ingest(sid, data):
     worker_count = len([w for w in connected_workers.values() if w.get('worker_type') == 'yolo_inference'])
     
     if worker_count == 0:
-        print(f"⚠️ No inference workers available")
+        logger.warning("No inference workers available")
         await sio.emit('error', {'message': 'No inference workers available'}, room=sid)
         return
     
@@ -223,7 +275,7 @@ async def detection_created(sid, data):
     Detection result from inference worker
     Broadcast to all clients
     """
-    print(f"🎯 Detection broadcast: {data.get('detection_class')} "
+    logger.info(f"Detection broadcast: {data.get('detection_class')} "
           f"({data.get('confidence', 0):.2%})")
     await sio.emit('detection:created', data)
 

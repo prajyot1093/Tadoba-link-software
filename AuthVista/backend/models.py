@@ -109,7 +109,7 @@ class Camera(Base):
     status = Column(Enum(CameraStatus), default=CameraStatus.OFFLINE)
     fps = Column(Integer, default=5)
     last_seen = Column(DateTime(timezone=True))
-    metadata = Column(JSON, default={})  # RTSP credentials (encrypted), resolution, etc.
+    camera_metadata = Column(JSON, default={})  # RTSP credentials (encrypted), resolution, etc.
     is_active = Column(Boolean, default=True)
     created_by = Column(Integer, ForeignKey("users.id"))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -183,6 +183,6 @@ class Animal(Base):
     last_seen_location = Column(Geometry('POINT', srid=4326))
     last_seen_at = Column(DateTime(timezone=True))
     status = Column(String, default="active")  # active, relocated, deceased
-    metadata = Column(JSON, default={})  # Age, gender, health notes
+    animal_metadata = Column(JSON, default={})  # Age, gender, health notes
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())

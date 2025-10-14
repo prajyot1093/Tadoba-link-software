@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { AlertTriangle, X, MapPin, Clock, ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -28,7 +28,7 @@ interface AlertBannerProps {
   cameras: Camera[];
 }
 
-export function AlertBanner({ cameras }: AlertBannerProps) {
+export const AlertBanner = memo(function AlertBanner({ cameras }: AlertBannerProps) {
   const [alerts, setAlerts] = useState<Detection[]>([]);
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
 
@@ -38,7 +38,9 @@ export function AlertBanner({ cameras }: AlertBannerProps) {
     const ws = new WebSocket(`${protocol}//${window.location.host}`);
 
     ws.onopen = () => {
-      console.log('🔔 Alert system connected');
+      if (import.meta.env.DEV) {
+        console.log('🔔 Alert system connected');
+      }
     };
 
     ws.onmessage = (event) => {
@@ -68,16 +70,22 @@ export function AlertBanner({ cameras }: AlertBannerProps) {
           }
         }
       } catch (err) {
-        console.error('Alert parsing error:', err);
+        if (import.meta.env.DEV) {
+          console.error('Alert parsing error:', err);
+        }
       }
     };
 
     ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
+      if (import.meta.env.DEV) {
+        console.error('WebSocket error:', error);
+      }
     };
 
     ws.onclose = () => {
-      console.log('🔌 Alert system disconnected');
+      if (import.meta.env.DEV) {
+        console.log('🔌 Alert system disconnected');
+      }
     };
 
     // Request notification permission
@@ -109,7 +117,10 @@ export function AlertBanner({ cameras }: AlertBannerProps) {
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 0.5);
     } catch (err) {
-      console.error('Audio playback error:', err);
+      // Silently fail - audio playback is non-critical
+      if (import.meta.env.DEV) {
+        console.error('Audio playback error:', err);
+      }
     }
   };
 
@@ -230,4 +241,4 @@ export function AlertBanner({ cameras }: AlertBannerProps) {
       })}
     </div>
   );
-}
+});

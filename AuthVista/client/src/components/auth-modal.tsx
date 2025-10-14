@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { setAuthToken } from '@/lib/queryClient';
 import { queryClient } from '@/lib/queryClient';
@@ -36,18 +37,36 @@ export function AuthModal() {
 
   const loginMutation = useMutation({
     mutationFn: async (data: { email: string; password: string }) => {
+      // Backend expects form data (OAuth2PasswordRequestForm)
+      const formData = new FormData();
+      formData.append('username', data.email); // Use email as username
+      formData.append('password', data.password);
+      
       const res = await fetch('/api/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: formData,
       });
 
       if (!res.ok) {
         const error = await res.json();
-        throw new Error(error.message || 'Login failed');
+        throw new Error(error.detail || error.message || 'Login failed');
       }
 
-      return res.json() as Promise<AuthResponse>;
+      const tokenData = await res.json();
+      
+      // Get user info with the token
+      const userRes = await fetch('/api/auth/me', {
+        headers: { 
+          'Authorization': `Bearer ${tokenData.access_token}` 
+        },
+      });
+      
+      const user = await userRes.json();
+      
+      return { 
+        token: tokenData.access_token, 
+        user 
+      } as AuthResponse;
     },
     onSuccess: (data) => {
       setAuthToken(data.token);
@@ -56,7 +75,8 @@ export function AuthModal() {
         title: 'Welcome back!',
         description: 'You have successfully logged in.',
       });
-      window.location.reload();
+      // Redirect to dashboard/home page instead of reloading
+      window.location.href = '/';
     },
     onError: (error: Error) => {
       toast({
@@ -69,15 +89,32 @@ export function AuthModal() {
 
   const registerMutation = useMutation({
     mutationFn: async (data: typeof registerData) => {
+      // Transform frontend data to backend schema
+      // Map frontend role values to backend enum values
+      const roleMapping: { [key: string]: string } = {
+        'local': 'local',
+        'department': 'ranger'  // Map 'department' to 'ranger' enum value
+      };
+      
+      const payload = {
+        email: data.email,
+        username: data.email.split('@')[0], // Use email prefix as username
+        password: data.password,
+        full_name: `${data.firstName} ${data.lastName}`.trim(),
+        role: roleMapping[data.role] || 'viewer'  // Use mapped value
+      };
+      
+      // Debug log removed for security (prevented password logging)
+      
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || 'Registration failed');
+        const error = await res.json().catch(() => ({ detail: 'Registration failed' }));
+        throw new Error(error.detail || error.message || 'Registration failed');
       }
 
       return res.json() as Promise<AuthResponse>;
@@ -89,7 +126,8 @@ export function AuthModal() {
         title: 'Account created!',
         description: 'Welcome to Tadoba Smart Conservation.',
       });
-      window.location.reload();
+      // Redirect to dashboard/home page instead of reloading
+      window.location.href = '/';
     },
     onError: (error: Error) => {
       toast({
@@ -127,6 +165,16 @@ export function AuthModal() {
             <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-secondary/20 to-primary/20 rounded-xl blur-xl opacity-50 -z-10" />
             
             <Tabs defaultValue="login" className="w-full">
+              {/* Tab Triggers */}
+              <TabsList className="grid w-full grid-cols-2 mb-6 bg-white/5 p-1 rounded-lg">
+                <TabsTrigger value="login" className="rounded-md data-[state=active]:bg-white/10 data-[state=active]:text-white">
+                  Login
+                </TabsTrigger>
+                <TabsTrigger value="register" className="rounded-md data-[state=active]:bg-white/10 data-[state=active]:text-white">
+                  Register
+                </TabsTrigger>
+              </TabsList>
+
               <TabsContent value="login" className="mt-0">
                 <motion.form 
                   onSubmit={handleLogin} 
@@ -159,8 +207,8 @@ export function AuthModal() {
                   <div className="relative w-full h-[50px] mb-7">
                     <Input
                       id="login-email"
-                      type="email"
-                      placeholder="Username"
+                      type="text"
+                      placeholder="Email or Username"
                       value={loginData.email}
                       onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
                       className="w-full h-full bg-transparent border-2 border-white/20 rounded-[40px] text-base text-white px-5 pr-12 placeholder:text-white/70 focus:border-primary/60 focus:ring-2 focus:ring-primary/30 transition-all"
@@ -230,12 +278,16 @@ export function AuthModal() {
                   <div className="text-center mt-5 text-sm text-white/90">
                     <p>
                       Don't have an account?{' '}
-                      <TabsTrigger 
-                        value="register" 
+                      <button 
+                        type="button"
+                        onClick={() => {
+                          const registerTab = document.querySelector('[value="register"]') as HTMLButtonElement;
+                          registerTab?.click();
+                        }}
                         className="text-white font-semibold hover:underline cursor-pointer bg-transparent p-0 h-auto border-0"
                       >
                         Register
-                      </TabsTrigger>
+                      </button>
                     </p>
                   </div>
 
@@ -369,12 +421,16 @@ export function AuthModal() {
                   <div className="text-center mt-5 text-sm text-white/90">
                     <p>
                       Already have an account?{' '}
-                      <TabsTrigger 
-                        value="login" 
+                      <button 
+                        type="button"
+                        onClick={() => {
+                          const loginTab = document.querySelector('[value="login"]') as HTMLButtonElement;
+                          loginTab?.click();
+                        }}
                         className="text-white font-semibold hover:underline cursor-pointer bg-transparent p-0 h-auto border-0"
                       >
                         Login
-                      </TabsTrigger>
+                      </button>
                     </p>
                   </div>
                 </motion.form>

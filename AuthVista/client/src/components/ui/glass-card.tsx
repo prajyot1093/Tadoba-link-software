@@ -1,18 +1,17 @@
 import { motion } from "framer-motion";
 import { Card } from "./card";
 import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
+import { ReactNode, memo, HTMLAttributes } from "react";
 
-interface GlassCardProps {
+interface GlassCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'strength' | 'animated' | 'glow'> {
   strength?: "light" | "medium" | "strong";
   animated?: boolean;
   glow?: boolean;
   className?: string;
   children?: ReactNode;
-  [key: string]: any; // For rest props
 }
 
-export function GlassCard({
+export const GlassCard = memo(function GlassCard({
   className,
   strength = "medium",
   animated = false,
@@ -55,4 +54,4 @@ export function GlassCard({
   }
 
   return cardContent;
-}
+});
