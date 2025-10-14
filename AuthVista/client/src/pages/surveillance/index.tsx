@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { AddCameraModal } from '@/components/surveillance/add-camera-modal';
 import { UploadImageModal } from '@/components/surveillance/upload-image-modal';
+import { SurveillanceMap } from '@/components/surveillance/surveillance-map';
+import { AlertBanner } from '@/components/surveillance/alert-banner';
 import { Link } from 'wouter';
 
 interface Camera {
@@ -109,6 +111,9 @@ export default function SurveillanceDashboard() {
 
   return (
     <div className="container mx-auto p-6 space-y-6">
+      {/* Real-time Alert Banner */}
+      <AlertBanner cameras={cameras} />
+
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
@@ -177,6 +182,14 @@ export default function SurveillanceDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Map Visualization */}
+      <SurveillanceMap 
+        cameras={cameras}
+        detections={detections}
+        selectedCamera={selectedCamera}
+        onCameraSelect={setSelectedCamera}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Camera Grid */}
