@@ -90,6 +90,8 @@ export default {
         sans: ["var(--font-sans)"],
         serif: ["var(--font-serif)"],
         mono: ["var(--font-mono)"],
+        poppins: ["Poppins", "sans-serif"],
+        quicksand: ["Quicksand", "sans-serif"],
       },
       keyframes: {
         "accordion-down": {

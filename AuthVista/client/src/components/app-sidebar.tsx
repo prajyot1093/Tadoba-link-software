@@ -1,4 +1,4 @@
-import { Home, Map, MessageSquare, PawPrint, Calendar, Plus, Bell, Camera, BarChart3, Settings } from "lucide-react";
+import { Home, Map, MessageSquare, PawPrint, Calendar, Plus, Bell, Camera, BarChart3, Settings, TreePine, Leaf } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -109,15 +109,21 @@ export function AppSidebar() {
   const items = isDepartment ? departmentItems : localItems;
 
   return (
-    <Sidebar data-testid="sidebar-main">
-      <SidebarHeader className="p-4 border-b border-sidebar-border">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-            <PawPrint className="w-6 h-6 text-primary-foreground" />
+    <Sidebar data-testid="sidebar-main" className="glass-card-strong border-r-primary/20">
+      <SidebarHeader className="p-4 border-b border-sidebar-border/30">
+        <div className="flex items-center gap-3 relative">
+          <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary/70 rounded-xl flex items-center justify-center forest-glow relative overflow-hidden">
+            <TreePine className="w-6 h-6 text-primary-foreground relative z-10" strokeWidth={2} />
+            <Leaf className="absolute top-1 right-1 w-3 h-3 text-secondary/70 animate-pulse" />
           </div>
           <div>
-            <h2 className="text-sm font-semibold text-sidebar-foreground">Tadoba</h2>
-            <p className="text-xs text-muted-foreground">Smart Conservation</p>
+            <h2 className="text-base font-bold text-sidebar-foreground font-quicksand bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Tadoba Forest
+            </h2>
+            <p className="text-xs text-muted-foreground/80 flex items-center gap-1">
+              <Leaf className="w-3 h-3 text-primary/60" />
+              Smart Conservation
+            </p>
           </div>
         </div>
       </SidebarHeader>

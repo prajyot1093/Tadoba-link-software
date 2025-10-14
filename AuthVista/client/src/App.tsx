@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { ForestParticles } from "@/components/ui/forest-background";
 import { useAuth } from "@/hooks/useAuth";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import NotFound from "@/pages/not-found";
@@ -82,10 +83,15 @@ function AppContent() {
 
   return (
     <SidebarProvider style={sidebarStyle as React.CSSProperties}>
-      <div className="flex h-screen w-full">
+      {/* Forest background for authenticated pages */}
+      <div className="forest-background" />
+      <ForestParticles />
+      <div className="mist-overlay" />
+      
+      <div className="flex h-screen w-full relative z-20">
         <AppSidebar />
         <div className="flex flex-col flex-1 overflow-hidden">
-          <header className="flex items-center justify-between p-4 border-b border-border bg-background/80 backdrop-blur-sm">
+          <header className="flex items-center justify-between p-4 border-b border-border/30 glass-card-strong">
             <SidebarTrigger data-testid="button-sidebar-toggle" />
           </header>
           <main className="flex-1 overflow-auto">
