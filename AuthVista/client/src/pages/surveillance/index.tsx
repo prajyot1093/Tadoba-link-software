@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Camera, AlertTriangle, Activity, Shield, Plus } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Camera, AlertTriangle, Activity, Shield, Plus, TreePine, Leaf } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { GlassCard } from '@/components/ui/glass-card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { AddCameraModal } from '@/components/surveillance/add-camera-modal';
@@ -115,234 +117,315 @@ export default function SurveillanceDashboard() {
       <AlertBanner cameras={cameras} />
 
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="flex justify-between items-center"
+      >
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">🎯 AI Surveillance System</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-4xl font-bold text-foreground flex items-center gap-3 font-quicksand">
+            <TreePine className="h-10 w-10 text-primary drop-shadow-lg" />
+            AI Surveillance System
+          </h1>
+          <p className="text-muted-foreground mt-2 flex items-center gap-2">
+            <Leaf className="h-4 w-4 text-primary/70" />
             Real-time wildlife conservation monitoring with YOLO detection
           </p>
         </div>
-        <Button className="gap-2" onClick={() => setAddCameraOpen(true)}>
+        <Button className="glass-button gap-2 h-11 px-6" onClick={() => setAddCameraOpen(true)}>
           <Plus className="h-4 w-4" />
           Add Camera
         </Button>
-      </div>
+      </motion.div>
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Cameras</CardTitle>
-            <Camera className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{activeCameras}</div>
-            <p className="text-xs text-gray-600 mt-1">
-              {cameras.length} total cameras
-            </p>
-          </CardContent>
-        </Card>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+        >
+          <GlassCard strength="medium" glow>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-foreground/90">Active Cameras</CardTitle>
+              <Camera className="h-5 w-5 text-primary" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-primary">{activeCameras}</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                {cameras.length} total cameras
+              </p>
+            </CardContent>
+          </GlassCard>
+        </motion.div>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Today's Detections</CardTitle>
-            <Activity className="h-4 w-4 text-blue-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{todayDetections}</div>
-            <p className="text-xs text-gray-600 mt-1">
-              {detections.length} total detections
-            </p>
-          </CardContent>
-        </Card>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+        >
+          <GlassCard strength="medium">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-foreground/90">Today's Detections</CardTitle>
+              <Activity className="h-5 w-5 text-secondary" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-secondary">{todayDetections}</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                {detections.length} total detections
+              </p>
+            </CardContent>
+          </GlassCard>
+        </motion.div>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Critical Alerts</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-red-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">{criticalAlerts}</div>
-            <p className="text-xs text-gray-600 mt-1">
-              Requires immediate action
-            </p>
-          </CardContent>
-        </Card>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, delay: 0.3 }}
+        >
+          <GlassCard strength="medium" className="border-destructive/30">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-foreground/90">Critical Alerts</CardTitle>
+              <AlertTriangle className="h-5 w-5 text-destructive" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-destructive">{criticalAlerts}</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Requires immediate action
+              </p>
+            </CardContent>
+          </GlassCard>
+        </motion.div>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">System Status</CardTitle>
-            <Shield className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">Online</div>
-            <p className="text-xs text-gray-600 mt-1">
-              All systems operational
-            </p>
-          </CardContent>
-        </Card>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, delay: 0.4 }}
+        >
+          <GlassCard strength="medium" glow>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-foreground/90">System Status</CardTitle>
+              <Shield className="h-5 w-5 text-primary" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-primary">Online</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                All systems operational
+              </p>
+            </CardContent>
+          </GlassCard>
+        </motion.div>
       </div>
 
       {/* Map Visualization */}
-      <SurveillanceMap 
-        cameras={cameras}
-        detections={detections}
-        selectedCamera={selectedCamera}
-        onCameraSelect={setSelectedCamera}
-      />
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.5 }}
+      >
+        <SurveillanceMap 
+          cameras={cameras}
+          detections={detections}
+          selectedCamera={selectedCamera}
+          onCameraSelect={setSelectedCamera}
+        />
+      </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Camera Grid */}
         <div className="lg:col-span-2">
-          <Card>
+          <GlassCard strength="strong">
             <CardHeader>
-              <CardTitle>📹 Camera Network</CardTitle>
-              <CardDescription>
+              <CardTitle className="flex items-center gap-2 text-foreground">
+                <Camera className="h-5 w-5 text-primary" />
+                Camera Network
+              </CardTitle>
+              <CardDescription className="text-muted-foreground/80">
                 Monitor all surveillance cameras across Tadoba reserve
               </CardDescription>
             </CardHeader>
             <CardContent>
               {camerasLoading ? (
-                <div className="text-center py-8 text-gray-500">Loading cameras...</div>
+                <div className="text-center py-8 text-muted-foreground">Loading cameras...</div>
               ) : cameras.length === 0 ? (
                 <div className="text-center py-8">
-                  <Camera className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                  <p className="text-gray-600">No cameras registered yet</p>
-                  <Button className="mt-4" onClick={() => setAddCameraOpen(true)}>
+                  <Camera className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" />
+                  <p className="text-muted-foreground">No cameras registered yet</p>
+                  <Button className="mt-4 glass-button" onClick={() => setAddCameraOpen(true)}>
                     Add Your First Camera
                   </Button>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {cameras.map((camera) => (
-                    <Card 
+                  {cameras.map((camera, idx) => (
+                    <motion.div
                       key={camera.id}
-                      className={`cursor-pointer transition-all hover:shadow-lg ${
-                        selectedCamera === camera.id ? 'ring-2 ring-blue-500' : ''
-                      }`}
-                      onClick={() => setSelectedCamera(camera.id)}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: idx * 0.05 }}
+                      whileHover={{ scale: 1.03 }}
                     >
-                      <CardContent className="p-4">
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <Camera className="h-5 w-5 text-gray-600" />
-                            <h3 className="font-semibold text-lg">{camera.name}</h3>
+                      <Card 
+                        className={`glass-card cursor-pointer transition-all hover:border-primary/50 ${
+                          selectedCamera === camera.id ? 'ring-2 ring-primary border-primary/70' : ''
+                        }`}
+                        onClick={() => setSelectedCamera(camera.id)}
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <Camera className="h-5 w-5 text-primary" />
+                              <h3 className="font-semibold text-lg text-foreground">{camera.name}</h3>
+                            </div>
+                            <div className={`w-3 h-3 rounded-full ${getStatusColor(camera.status)} shadow-lg`} />
                           </div>
-                          <div className={`w-3 h-3 rounded-full ${getStatusColor(camera.status)}`} />
-                        </div>
-                        <p className="text-sm text-gray-600 mb-1">📍 {camera.location}</p>
-                        {camera.zone && (
-                          <Badge variant="outline" className="text-xs">
-                            Zone: {camera.zone}
-                          </Badge>
-                        )}
-                        <div className="mt-3 text-xs text-gray-500">
-                          <div>Lat: {camera.latitude.toFixed(4)}, Lng: {camera.longitude.toFixed(4)}</div>
-                          <div className="mt-1 capitalize">Status: {camera.status}</div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                          <p className="text-sm text-muted-foreground mb-2 flex items-center gap-1">
+                            <Leaf className="h-3 w-3 text-primary/60" />
+                            {camera.location}
+                          </p>
+                          {camera.zone && (
+                            <Badge variant="outline" className="text-xs border-primary/30 text-primary">
+                              Zone: {camera.zone}
+                            </Badge>
+                          )}
+                          <div className="mt-3 text-xs text-muted-foreground/70 space-y-1">
+                            <div>Lat: {camera.latitude.toFixed(4)}, Lng: {camera.longitude.toFixed(4)}</div>
+                            <div className="capitalize">Status: <span className="font-medium text-foreground/80">{camera.status}</span></div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
                   ))}
                 </div>
               )}
             </CardContent>
-          </Card>
+          </GlassCard>
         </div>
 
         {/* Detection Timeline */}
         <div className="lg:col-span-1">
-          <Card>
+          <GlassCard strength="strong">
             <CardHeader>
-              <CardTitle>🎯 Recent Detections</CardTitle>
-              <CardDescription>
+              <CardTitle className="flex items-center gap-2 text-foreground">
+                <Activity className="h-5 w-5 text-secondary" />
+                Recent Detections
+              </CardTitle>
+              <CardDescription className="text-muted-foreground/80">
                 Latest YOLO detections from all cameras
               </CardDescription>
             </CardHeader>
             <CardContent>
               {detectionsLoading ? (
-                <div className="text-center py-8 text-gray-500">Loading detections...</div>
+                <div className="text-center py-8 text-muted-foreground">Loading detections...</div>
               ) : detections.length === 0 ? (
                 <div className="text-center py-8">
-                  <Activity className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                  <p className="text-gray-600 text-sm">No detections yet</p>
-                  <p className="text-gray-500 text-xs mt-1">Upload images to start</p>
+                  <Activity className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" />
+                  <p className="text-muted-foreground text-sm">No detections yet</p>
+                  <p className="text-muted-foreground/60 text-xs mt-1">Upload images to start</p>
                 </div>
               ) : (
-                <div className="space-y-3 max-h-[600px] overflow-y-auto">
-                  {detections.map((detection) => {
+                <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
+                  {detections.map((detection, idx) => {
                     const camera = cameras.find(c => c.id === detection.camera_id);
                     const objectTypes = Array.from(new Set(detection.detected_objects.map(o => o.class)));
                     
                     return (
                       <Link key={detection.id} href={`/surveillance/detection/${detection.id}`}>
-                        <Card className="p-3 cursor-pointer hover:shadow-lg transition-all">
-                          <div className="flex items-start justify-between mb-2">
-                            <Badge className={getThreatColor(detection.threat_level)}>
-                              {detection.threat_level.toUpperCase()}
-                            </Badge>
-                            <span className="text-xs text-gray-500">
-                              {formatTimeAgo(detection.timestamp)}
-                            </span>
-                          </div>
-                          <p className="text-sm font-medium mb-1">
-                            {camera?.name || 'Unknown Camera'}
-                          </p>
-                          <div className="text-xs text-gray-600">
-                            <div className="mb-1">
-                              <strong>{detection.detection_count}</strong> objects detected
+                        <motion.div
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.3, delay: idx * 0.05 }}
+                          whileHover={{ scale: 1.02 }}
+                        >
+                          <Card className="glass-card p-3 cursor-pointer hover:border-primary/50 transition-all">
+                            <div className="flex items-start justify-between mb-2">
+                              <Badge className={getThreatColor(detection.threat_level)}>
+                                {detection.threat_level.toUpperCase()}
+                              </Badge>
+                              <span className="text-xs text-muted-foreground/70">
+                                {formatTimeAgo(detection.timestamp)}
+                              </span>
                             </div>
-                            <div className="flex flex-wrap gap-1">
-                              {objectTypes.map(type => (
-                                <Badge key={type} variant="secondary" className="text-xs">
-                                  {type}
-                                </Badge>
-                              ))}
+                            <p className="text-sm font-medium text-foreground mb-1 flex items-center gap-2">
+                              <Camera className="h-4 w-4 text-primary/70" />
+                              {camera?.name || 'Unknown Camera'}
+                            </p>
+                            <div className="text-xs text-muted-foreground/80">
+                              <div className="mb-2">
+                                <strong className="text-foreground">{detection.detection_count}</strong> objects detected
+                              </div>
+                              <div className="flex flex-wrap gap-1">
+                                {objectTypes.map(type => (
+                                  <Badge key={type} variant="secondary" className="text-xs bg-primary/10 text-primary border-primary/20">
+                                    {type}
+                                  </Badge>
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                          {detection.threat_level === 'critical' && (
-                            <div className="mt-2 p-2 bg-red-50 rounded text-xs text-red-700">
-                              ⚠️ Weapon detected - Immediate action required!
-                            </div>
-                          )}
-                        </Card>
+                            {detection.threat_level === 'critical' && (
+                              <div className="mt-2 p-2 backdrop-blur-sm bg-destructive/10 border border-destructive/30 rounded-lg text-xs text-destructive font-medium">
+                                <AlertTriangle className="h-3 w-3 inline mr-1" />
+                                Weapon detected - Immediate action required!
+                              </div>
+                            )}
+                          </Card>
+                        </motion.div>
                       </Link>
                     );
                   })}
                 </div>
               )}
             </CardContent>
-          </Card>
+          </GlassCard>
         </div>
       </div>
 
       {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>⚡ Quick Actions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => setAddCameraOpen(true)}>
-              <Camera className="h-6 w-6" />
-              <span className="text-sm">Add Camera</span>
-            </Button>
-            <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => setUploadImageOpen(true)}>
-              <Activity className="h-6 w-6" />
-              <span className="text-sm">Upload Image</span>
-            </Button>
-            <Link href="/analytics">
-              <Button variant="outline" className="h-20 w-full flex-col gap-2">
-                <Shield className="h-6 w-6" />
-                <span className="text-sm">Analytics</span>
-              </Button>
-            </Link>
-            <Button variant="outline" className="h-20 flex-col gap-2">
-              <AlertTriangle className="h-6 w-6" />
-              <span className="text-sm">View Alerts</span>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.7 }}
+      >
+        <GlassCard strength="medium">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-foreground">
+              <Leaf className="h-5 w-5 text-primary" />
+              Quick Actions
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button variant="outline" className="h-20 w-full flex-col gap-2 glass-card border-primary/20 hover:border-primary/50" onClick={() => setAddCameraOpen(true)}>
+                  <Camera className="h-6 w-6 text-primary" />
+                  <span className="text-sm">Add Camera</span>
+                </Button>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button variant="outline" className="h-20 w-full flex-col gap-2 glass-card border-secondary/20 hover:border-secondary/50" onClick={() => setUploadImageOpen(true)}>
+                  <Activity className="h-6 w-6 text-secondary" />
+                  <span className="text-sm">Upload Image</span>
+                </Button>
+              </motion.div>
+              <Link href="/analytics">
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="h-full">
+                  <Button variant="outline" className="h-20 w-full flex-col gap-2 glass-card border-primary/20 hover:border-primary/50">
+                    <Shield className="h-6 w-6 text-primary" />
+                    <span className="text-sm">Analytics</span>
+                  </Button>
+                </motion.div>
+              </Link>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button variant="outline" className="h-20 w-full flex-col gap-2 glass-card border-destructive/20 hover:border-destructive/50">
+                  <AlertTriangle className="h-6 w-6 text-destructive" />
+                  <span className="text-sm">View Alerts</span>
+                </Button>
+              </motion.div>
+            </div>
+          </CardContent>
+        </GlassCard>
+      </motion.div>
 
       {/* Add Camera Modal */}
       <AddCameraModal open={addCameraOpen} onOpenChange={setAddCameraOpen} />
