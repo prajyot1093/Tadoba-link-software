@@ -112,242 +112,288 @@ export function AuthModal() {
 
   return (
     <ForestBackground>
-      <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="min-h-screen flex items-center justify-center p-4 relative">
         <ForestParticles />
         
         <motion.div
-          initial={{ opacity: 0, y: 20, scale: 0.95 }}
+          initial={{ opacity: 0, y: 30, scale: 0.9 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="w-full max-w-md"
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          className="w-full max-w-[420px] relative"
         >
-          <Card className="glass-card-strong border-primary/30 overflow-hidden">
-            {/* Decorative elements */}
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
-            <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl" />
-            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-secondary/10 rounded-full blur-3xl" />
+          {/* Glassmorphic wrapper matching Dan Aleko's design */}
+          <div className="relative backdrop-blur-[15px] bg-white/10 border-2 border-white/20 rounded-xl p-10 shadow-2xl">
+            {/* Decorative forest glow effects */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-secondary/20 to-primary/20 rounded-xl blur-xl opacity-50 -z-10" />
             
-            <CardHeader className="text-center space-y-4 relative">
-              <motion.div
-                animate={{ rotate: [0, 5, -5, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="flex justify-center"
-              >
-                <div className="relative">
-                  <TreePine className="h-16 w-16 text-primary drop-shadow-lg" strokeWidth={1.5} />
-                  <Leaf className="absolute -top-2 -right-2 h-6 w-6 text-secondary animate-pulse" />
-                  <Sparkles className="absolute -bottom-1 -left-1 h-4 w-4 text-primary/70 animate-pulse" style={{ animationDelay: '0.5s' }} />
-                </div>
-              </motion.div>
-              
-              <div className="space-y-2">
-                <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary via-primary to-secondary bg-clip-text text-transparent font-quicksand">
-                  Tadoba Conservation
-                </CardTitle>
-                <CardDescription className="text-muted-foreground/90 flex items-center justify-center gap-2">
-                  <Leaf className="h-4 w-4 text-primary/60" />
-                  <span>Protecting Wildlife, One Step at a Time</span>
-                  <Leaf className="h-4 w-4 text-primary/60" />
-                </CardDescription>
-              </div>
-            </CardHeader>
-            
-            <CardContent>
-              <Tabs defaultValue="login" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 glass-card p-1">
-                  <TabsTrigger 
-                    value="login"
-                    className="data-[state=active]:glass-button data-[state=active]:forest-glow transition-all"
-                  >
-                    Login
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="register"
-                    className="data-[state=active]:glass-button data-[state=active]:forest-glow transition-all"
-                  >
-                    Register
-                  </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="login">
-                  <motion.form 
-                    onSubmit={handleLogin} 
-                    className="space-y-5 mt-6"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.4 }}
-                  >
-                    <div className="space-y-2">
-                      <Label htmlFor="login-email" className="text-foreground/90 font-medium">
-                        Email Address
-                      </Label>
-                      <Input
-                        id="login-email"
-                        type="email"
-                        placeholder="ranger@tadoba.forest"
-                        value={loginData.email}
-                        onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
-                        className="glass-input h-11 font-medium"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="login-password" className="text-foreground/90 font-medium">
-                        Password
-                      </Label>
-                      <Input
-                        id="login-password"
-                        type="password"
-                        placeholder="••••••••"
-                        value={loginData.password}
-                        onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                        className="glass-input h-11 font-medium"
-                        required
-                      />
-                    </div>
-                    <Button
-                      type="submit"
-                      className="w-full glass-button h-11 text-base font-semibold"
-                      disabled={loginMutation.isPending}
+            <Tabs defaultValue="login" className="w-full">
+              <TabsContent value="login" className="mt-0">
+                <motion.form 
+                  onSubmit={handleLogin} 
+                  className="space-y-0"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  {/* Logo & Title */}
+                  <div className="text-center mb-8">
+                    <motion.div
+                      animate={{ 
+                        rotate: [0, 5, -5, 0],
+                        scale: [1, 1.05, 1]
+                      }}
+                      transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                      className="flex justify-center mb-4"
                     >
-                      {loginMutation.isPending ? (
-                        <span className="flex items-center gap-2">
-                          <motion.div
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                          >
-                            <Sparkles className="h-4 w-4" />
-                          </motion.div>
-                          Logging in...
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-2">
-                          <TreePine className="h-4 w-4" />
-                          Enter Forest
-                        </span>
-                      )}
-                    </Button>
-                    
-                    {/* Demo Credentials */}
-                    <div className="text-center text-sm text-muted-foreground/70 pt-2 space-y-1">
-                      <p className="font-medium">Demo Credentials:</p>
-                      <p className="text-xs">admin@tadoba.com / admin123</p>
-                    </div>
-                  </motion.form>
-                </TabsContent>
+                      <div className="relative">
+                        <TreePine className="h-14 w-14 text-white drop-shadow-2xl" strokeWidth={1.8} />
+                        <Leaf className="absolute -top-2 -right-2 h-5 w-5 text-secondary animate-pulse" />
+                        <Sparkles className="absolute -bottom-1 -left-2 h-4 w-4 text-white/80 animate-pulse" style={{ animationDelay: '0.7s' }} />
+                      </div>
+                    </motion.div>
+                    <h1 className="text-4xl font-bold text-white mb-1 font-poppins">Login</h1>
+                    <p className="text-white/70 text-sm">Enter your credentials to continue</p>
+                  </div>
 
-                <TabsContent value="register">
-                  <motion.form 
-                    onSubmit={handleRegister} 
-                    className="space-y-4 mt-6"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.4 }}
+                  {/* Username Input */}
+                  <div className="relative w-full h-[50px] mb-7">
+                    <Input
+                      id="login-email"
+                      type="email"
+                      placeholder="Username"
+                      value={loginData.email}
+                      onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                      className="w-full h-full bg-transparent border-2 border-white/20 rounded-[40px] text-base text-white px-5 pr-12 placeholder:text-white/70 focus:border-primary/60 focus:ring-2 focus:ring-primary/30 transition-all"
+                      required
+                    />
+                    <i className="absolute right-5 top-1/2 -translate-y-1/2 text-white text-xl">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                      </svg>
+                    </i>
+                  </div>
+
+                  {/* Password Input */}
+                  <div className="relative w-full h-[50px] mb-5">
+                    <Input
+                      id="login-password"
+                      type="password"
+                      placeholder="Password"
+                      value={loginData.password}
+                      onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                      className="w-full h-full bg-transparent border-2 border-white/20 rounded-[40px] text-base text-white px-5 pr-12 placeholder:text-white/70 focus:border-primary/60 focus:ring-2 focus:ring-primary/30 transition-all"
+                      required
+                    />
+                    <i className="absolute right-5 top-1/2 -translate-y-1/2 text-white text-xl">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                      </svg>
+                    </i>
+                  </div>
+
+                  {/* Remember & Forgot */}
+                  <div className="flex justify-between items-center text-sm mb-5 -mt-2">
+                    <label className="flex items-center gap-2 text-white/90 cursor-pointer hover:text-white transition-colors">
+                      <input 
+                        type="checkbox" 
+                        className="w-4 h-4 accent-white border-white/30 rounded cursor-pointer"
+                      />
+                      <span>Remember Me</span>
+                    </label>
+                    <a href="#" className="text-white/90 hover:text-white hover:underline transition-all">
+                      Forgot Password?
+                    </a>
+                  </div>
+
+                  {/* Login Button */}
+                  <Button
+                    type="submit"
+                    className="w-full h-11 bg-white hover:bg-white/95 text-gray-800 font-semibold text-base rounded-[40px] shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98] border-none"
+                    disabled={loginMutation.isPending}
                   >
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="register-firstName" className="text-foreground/90 font-medium">
-                          First Name
-                        </Label>
-                        <Input
-                          id="register-firstName"
-                          placeholder="John"
-                          value={registerData.firstName}
-                          onChange={(e) => setRegisterData({ ...registerData, firstName: e.target.value })}
-                          className="glass-input"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="register-lastName" className="text-foreground/90 font-medium">
-                          Last Name
-                        </Label>
-                        <Input
-                          id="register-lastName"
-                          placeholder="Doe"
-                          value={registerData.lastName}
-                          onChange={(e) => setRegisterData({ ...registerData, lastName: e.target.value })}
-                          className="glass-input"
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="register-email" className="text-foreground/90 font-medium">
-                        Email Address
-                      </Label>
-                      <Input
-                        id="register-email"
-                        type="email"
-                        placeholder="ranger@tadoba.forest"
-                        value={registerData.email}
-                        onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
-                        className="glass-input"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="register-password" className="text-foreground/90 font-medium">
-                        Password
-                      </Label>
-                      <Input
-                        id="register-password"
-                        type="password"
-                        placeholder="••••••••"
-                        value={registerData.password}
-                        onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
-                        className="glass-input"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="register-role" className="text-foreground/90 font-medium">
-                        Account Type
-                      </Label>
-                      <select
-                        id="register-role"
-                        className="w-full glass-input h-11"
-                        value={registerData.role}
-                        onChange={(e) => setRegisterData({ ...registerData, role: e.target.value as 'local' | 'department' })}
+                    {loginMutation.isPending ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        >
+                          <Sparkles className="h-4 w-4" />
+                        </motion.div>
+                        Logging in...
+                      </span>
+                    ) : (
+                      'Login'
+                    )}
+                  </Button>
+
+                  {/* Register Link */}
+                  <div className="text-center mt-5 text-sm text-white/90">
+                    <p>
+                      Don't have an account?{' '}
+                      <TabsTrigger 
+                        value="register" 
+                        className="text-white font-semibold hover:underline cursor-pointer bg-transparent p-0 h-auto border-0"
                       >
-                        <option value="local">Local Resident</option>
-                        <option value="department">Forest Department</option>
-                      </select>
-                    </div>
-                    <Button
-                      type="submit"
-                      className="w-full glass-button h-11 text-base font-semibold"
-                      disabled={registerMutation.isPending}
+                        Register
+                      </TabsTrigger>
+                    </p>
+                  </div>
+
+                  {/* Demo Credentials */}
+                  <div className="text-center text-xs text-white/60 mt-4 pt-4 border-t border-white/10">
+                    <p className="font-medium mb-1">Demo Credentials:</p>
+                    <p>admin@tadoba.com / admin123</p>
+                  </div>
+                </motion.form>
+              </TabsContent>
+
+              <TabsContent value="register" className="mt-0">
+                <motion.form 
+                  onSubmit={handleRegister} 
+                  className="space-y-0"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  {/* Logo & Title */}
+                  <div className="text-center mb-6">
+                    <motion.div
+                      animate={{ rotate: [0, -5, 5, 0] }}
+                      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                      className="flex justify-center mb-3"
                     >
-                      {registerMutation.isPending ? (
-                        <span className="flex items-center gap-2">
-                          <motion.div
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                          >
-                            <Sparkles className="h-4 w-4" />
-                          </motion.div>
-                          Creating account...
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-2">
-                          <Leaf className="h-4 w-4" />
-                          Join the Conservation
-                        </span>
-                      )}
-                    </Button>
-                  </motion.form>
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-          </Card>
+                      <Leaf className="h-12 w-12 text-white drop-shadow-2xl" strokeWidth={1.8} />
+                    </motion.div>
+                    <h1 className="text-4xl font-bold text-white mb-1 font-poppins">Register</h1>
+                    <p className="text-white/70 text-sm">Join the conservation effort</p>
+                  </div>
+
+                  {/* Name Fields */}
+                  <div className="grid grid-cols-2 gap-3 mb-5">
+                    <div className="relative w-full h-[50px]">
+                      <Input
+                        id="register-firstName"
+                        placeholder="First Name"
+                        value={registerData.firstName}
+                        onChange={(e) => setRegisterData({ ...registerData, firstName: e.target.value })}
+                        className="w-full h-full bg-transparent border-2 border-white/20 rounded-[40px] text-sm text-white px-4 placeholder:text-white/70 focus:border-primary/60 focus:ring-2 focus:ring-primary/30 transition-all"
+                      />
+                    </div>
+                    <div className="relative w-full h-[50px]">
+                      <Input
+                        id="register-lastName"
+                        placeholder="Last Name"
+                        value={registerData.lastName}
+                        onChange={(e) => setRegisterData({ ...registerData, lastName: e.target.value })}
+                        className="w-full h-full bg-transparent border-2 border-white/20 rounded-[40px] text-sm text-white px-4 placeholder:text-white/70 focus:border-primary/60 focus:ring-2 focus:ring-primary/30 transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Email Input */}
+                  <div className="relative w-full h-[50px] mb-5">
+                    <Input
+                      id="register-email"
+                      type="email"
+                      placeholder="Email Address"
+                      value={registerData.email}
+                      onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
+                      className="w-full h-full bg-transparent border-2 border-white/20 rounded-[40px] text-base text-white px-5 pr-12 placeholder:text-white/70 focus:border-primary/60 focus:ring-2 focus:ring-primary/30 transition-all"
+                      required
+                    />
+                    <i className="absolute right-5 top-1/2 -translate-y-1/2 text-white text-xl">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                      </svg>
+                    </i>
+                  </div>
+
+                  {/* Password Input */}
+                  <div className="relative w-full h-[50px] mb-5">
+                    <Input
+                      id="register-password"
+                      type="password"
+                      placeholder="Password"
+                      value={registerData.password}
+                      onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
+                      className="w-full h-full bg-transparent border-2 border-white/20 rounded-[40px] text-base text-white px-5 pr-12 placeholder:text-white/70 focus:border-primary/60 focus:ring-2 focus:ring-primary/30 transition-all"
+                      required
+                    />
+                    <i className="absolute right-5 top-1/2 -translate-y-1/2 text-white text-xl">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                      </svg>
+                    </i>
+                  </div>
+
+                  {/* Account Type */}
+                  <div className="relative w-full h-[50px] mb-5">
+                    <select
+                      id="register-role"
+                      className="w-full h-full bg-transparent border-2 border-white/20 rounded-[40px] text-base text-white px-5 pr-12 focus:border-primary/60 focus:ring-2 focus:ring-primary/30 transition-all appearance-none cursor-pointer"
+                      value={registerData.role}
+                      onChange={(e) => setRegisterData({ ...registerData, role: e.target.value as 'local' | 'department' })}
+                      style={{ 
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'right 20px center'
+                      }}
+                    >
+                      <option value="local" className="bg-gray-800 text-white">Local Resident</option>
+                      <option value="department" className="bg-gray-800 text-white">Forest Department</option>
+                    </select>
+                  </div>
+
+                  {/* Register Button */}
+                  <Button
+                    type="submit"
+                    className="w-full h-11 bg-white hover:bg-white/95 text-gray-800 font-semibold text-base rounded-[40px] shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98] border-none"
+                    disabled={registerMutation.isPending}
+                  >
+                    {registerMutation.isPending ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        >
+                          <Sparkles className="h-4 w-4" />
+                        </motion.div>
+                        Creating account...
+                      </span>
+                    ) : (
+                      'Create Account'
+                    )}
+                  </Button>
+
+                  {/* Login Link */}
+                  <div className="text-center mt-5 text-sm text-white/90">
+                    <p>
+                      Already have an account?{' '}
+                      <TabsTrigger 
+                        value="login" 
+                        className="text-white font-semibold hover:underline cursor-pointer bg-transparent p-0 h-auto border-0"
+                      >
+                        Login
+                      </TabsTrigger>
+                    </p>
+                  </div>
+                </motion.form>
+              </TabsContent>
+            </Tabs>
+          </div>
           
           {/* Footer */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="text-center mt-6 text-sm text-muted-foreground/60"
+            transition={{ delay: 0.6, duration: 0.8 }}
+            className="text-center mt-6 text-sm text-white/70 drop-shadow-lg"
           >
-            <p>🌳 Powered by Nature • Protected by Technology 🌳</p>
+            <p className="flex items-center justify-center gap-2">
+              <TreePine className="h-4 w-4" />
+              Powered by Nature • Protected by Technology
+              <Leaf className="h-4 w-4" />
+            </p>
           </motion.div>
         </motion.div>
       </div>
