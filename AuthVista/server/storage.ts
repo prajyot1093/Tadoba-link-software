@@ -18,9 +18,43 @@ import {
   type Alert,
   type InsertAlert,
 } from "@shared/schema";
-import { db } from "./db";
+import { db, sqlite } from "./db";
 import { eq, desc, and } from "drizzle-orm";
 import { v4 as uuidv4 } from 'uuid';
+
+// Surveillance types
+export interface Camera {
+  id: string;
+  name: string;
+  location: string;
+  latitude: number;
+  longitude: number;
+  status: 'active' | 'inactive' | 'maintenance';
+  zone?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DetectedObject {
+  class: string;
+  confidence: number;
+  bbox: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+}
+
+export interface Detection {
+  id: string;
+  camera_id: string;
+  image_url: string;
+  detected_objects: DetectedObject[];
+  detection_count: number;
+  threat_level: 'low' | 'medium' | 'high' | 'critical';
+  timestamp: string;
+}
 
 export interface IStorage {
   // User operations - JWT authentication
@@ -53,6 +87,13 @@ export interface IStorage {
   getUserAlerts(userId: string): Promise<Alert[]>;
   createAlert(alert: InsertAlert): Promise<Alert>;
   markAlertAsRead(id: string): Promise<void>;
+  
+  // Surveillance operations
+  getAllCameras(): Promise<any[]>;
+  createCamera(camera: any): Promise<any>;
+  createDetection(detection: any): Promise<any>;
+  getDetections(params: { cameraId?: string; limit: number }): Promise<any[]>;
+  getDetection(id: string): Promise<any | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -80,18 +121,27 @@ export class DatabaseStorage implements IStorage {
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
-    const [user] = await db
-      .insert(users)
-      .values(userData)
-      .onConflictDoUpdate({
-        target: users.id,
-        set: {
-          ...userData,
-          updatedAt: new Date(),
-        },
-      })
-      .returning();
-    return user;
+    // For SQLite, we use manual upsert logic
+    const existingUser = await this.getUserByEmail(userData.email);
+    if (existingUser) {
+      // Update existing user using raw SQL
+      const stmt = sqlite.prepare(`
+        UPDATE users 
+        SET first_name = ?, last_name = ?, profile_image_url = ?, updated_at = ?
+        WHERE email = ?
+      `);
+      stmt.run(
+        userData.firstName || existingUser.firstName,
+        userData.lastName || existingUser.lastName,
+        userData.profileImageUrl || existingUser.profileImageUrl,
+        new Date().toISOString(),
+        userData.email
+      );
+      return await this.getUserByEmail(userData.email) as User;
+    } else {
+      // Create new user
+      return await this.createUser(userData);
+    }
   }
 
   // Animal operations
@@ -213,6 +263,104 @@ export class DatabaseStorage implements IStorage {
 
   async markAlertAsRead(id: string): Promise<void> {
     await db.update(alerts).set({ isRead: true }).where(eq(alerts.id, id));
+  }
+
+  // Surveillance operations
+  async getAllCameras(): Promise<Camera[]> {
+    const stmt = sqlite.prepare(`
+      SELECT * FROM cameras ORDER BY created_at DESC
+    `);
+    return stmt.all() as Camera[];
+  }
+
+  async createCamera(camera: Omit<Camera, 'id' | 'created_at' | 'updated_at'>): Promise<Camera> {
+    const id = crypto.randomUUID();
+    const now = new Date().toISOString();
+    
+    const stmt = sqlite.prepare(`
+      INSERT INTO cameras (id, name, location, latitude, longitude, status, zone, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+    
+    stmt.run(id, camera.name, camera.location, camera.latitude, camera.longitude, camera.status, camera.zone, now, now);
+    
+    return { ...camera, id, created_at: now, updated_at: now } as Camera;
+  }
+
+  async createDetection(detection: Omit<Detection, 'id' | 'timestamp'>): Promise<Detection> {
+    const id = crypto.randomUUID();
+    const timestamp = new Date().toISOString();
+    
+    const stmt = sqlite.prepare(`
+      INSERT INTO detections (id, camera_id, image_url, detected_objects, detection_count, threat_level, timestamp)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `);
+    
+    stmt.run(
+      id,
+      detection.camera_id,
+      detection.image_url,
+      JSON.stringify(detection.detected_objects),
+      detection.detection_count,
+      detection.threat_level,
+      timestamp
+    );
+    
+    return { ...detection, id, timestamp } as Detection;
+  }
+
+  async getDetections(filters?: { camera_id?: string; threat_level?: string; start_date?: string; end_date?: string; limit?: number }): Promise<Detection[]> {
+    let query = `SELECT * FROM detections WHERE 1=1`;
+    const params: any[] = [];
+    
+    if (filters?.camera_id) {
+      query += ` AND camera_id = ?`;
+      params.push(filters.camera_id);
+    }
+    
+    if (filters?.threat_level) {
+      query += ` AND threat_level = ?`;
+      params.push(filters.threat_level);
+    }
+    
+    if (filters?.start_date) {
+      query += ` AND timestamp >= ?`;
+      params.push(filters.start_date);
+    }
+    
+    if (filters?.end_date) {
+      query += ` AND timestamp <= ?`;
+      params.push(filters.end_date);
+    }
+    
+    query += ` ORDER BY timestamp DESC`;
+    
+    if (filters?.limit) {
+      query += ` LIMIT ?`;
+      params.push(filters.limit);
+    }
+    
+    const stmt = sqlite.prepare(query);
+    const results = stmt.all(...params) as any[];
+    
+    return results.map(row => ({
+      ...row,
+      detected_objects: JSON.parse(row.detected_objects)
+    })) as Detection[];
+  }
+
+  async getDetection(id: string): Promise<Detection | null> {
+    const stmt = sqlite.prepare(`
+      SELECT * FROM detections WHERE id = ?
+    `);
+    const result = stmt.get(id) as any;
+    
+    if (!result) return null;
+    
+    return {
+      ...result,
+      detected_objects: JSON.parse(result.detected_objects)
+    } as Detection;
   }
 }
 
