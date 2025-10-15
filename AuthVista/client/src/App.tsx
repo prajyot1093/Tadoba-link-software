@@ -10,6 +10,7 @@ import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { ForestParticles } from "@/components/ui/forest-background";
 import { useAuth } from "@/hooks/useAuth";
 import { useWebSocket } from "@/hooks/useWebSocket";
+import { useWebVitals } from "@/lib/web-vitals";
 import NotFound from "@/pages/not-found";
 
 // Lazy-loaded route components for better code splitting
@@ -88,6 +89,9 @@ function AppContent() {
   
   // Connect to WebSocket for real-time alerts when authenticated
   useWebSocket({ isAuthenticated });
+  
+  // Track Web Vitals for performance monitoring
+  useWebVitals();
 
   const sidebarStyle = {
     "--sidebar-width": "16rem",

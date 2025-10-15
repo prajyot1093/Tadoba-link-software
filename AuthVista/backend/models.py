@@ -63,12 +63,12 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True, nullable=False)
     username = Column(String, unique=True, index=True, nullable=False)
-    full_name = Column(String)
+    full_name = Column(String, index=True)  # Add index for sorting/searching
     hashed_password = Column(String, nullable=False)
-    role = Column(Enum(UserRole), default=UserRole.VIEWER, nullable=False)
-    is_active = Column(Boolean, default=True)
+    role = Column(Enum(UserRole), default=UserRole.VIEWER, nullable=False, index=True)  # Index for role filtering
+    is_active = Column(Boolean, default=True, index=True)  # Index for active user queries
     phone = Column(String)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)  # Index for sorting
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
     # Relationships
@@ -81,15 +81,15 @@ class Geofence(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False, index=True)
-    zone_type = Column(Enum(ZoneType), nullable=False)
+    zone_type = Column(Enum(ZoneType), nullable=False, index=True)  # Index for zone type filtering
     # PostGIS geometry column - stores polygon as GeoJSON
     geometry = Column(Geometry('POLYGON', srid=4326), nullable=False)
     description = Column(Text)
     color = Column(String(7), default="#22c55e")  # Hex color
     properties = Column(JSON, default={})  # Extra metadata (patrol schedule, sensitivity, etc.)
-    is_active = Column(Boolean, default=True)
-    created_by = Column(Integer, ForeignKey("users.id"))
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    is_active = Column(Boolean, default=True, index=True)  # Index for active geofence queries
+    created_by = Column(Integer, ForeignKey("users.id"), index=True)  # Index for creator queries
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
     # Relationships
@@ -101,18 +101,18 @@ class Camera(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False, index=True)
-    type = Column(Enum(CameraType), nullable=False)
+    type = Column(Enum(CameraType), nullable=False, index=True)  # Index for camera type filtering
     url = Column(String)  # RTSP URL or stream endpoint
-    latitude = Column(Float)  # Camera geolocation
-    longitude = Column(Float)
+    latitude = Column(Float, index=True)  # Index for geospatial queries
+    longitude = Column(Float, index=True)
     heading = Column(Float)  # Camera direction in degrees (0-360)
-    status = Column(Enum(CameraStatus), default=CameraStatus.OFFLINE)
+    status = Column(Enum(CameraStatus), default=CameraStatus.OFFLINE, index=True)  # Index for status filtering
     fps = Column(Integer, default=5)
-    last_seen = Column(DateTime(timezone=True))
+    last_seen = Column(DateTime(timezone=True), index=True)  # Index for recent activity queries
     camera_metadata = Column(JSON, default={})  # RTSP credentials (encrypted), resolution, etc.
-    is_active = Column(Boolean, default=True)
-    created_by = Column(Integer, ForeignKey("users.id"))
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    is_active = Column(Boolean, default=True, index=True)
+    created_by = Column(Integer, ForeignKey("users.id"), index=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
     # Relationships
@@ -123,17 +123,17 @@ class Detection(Base):
     __tablename__ = "detections"
     
     id = Column(Integer, primary_key=True, index=True)
-    camera_id = Column(Integer, ForeignKey("cameras.id"), nullable=False)
-    detection_class = Column(Enum(DetectionClass), nullable=False)
-    confidence = Column(Float, nullable=False)  # 0.0 to 1.0
+    camera_id = Column(Integer, ForeignKey("cameras.id"), nullable=False, index=True)  # Index for camera queries
+    detection_class = Column(Enum(DetectionClass), nullable=False, index=True)  # Index for class filtering
+    confidence = Column(Float, nullable=False, index=True)  # Index for confidence filtering
     bbox = Column(JSON, nullable=False)  # {"x": 100, "y": 200, "width": 50, "height": 80}
     snapshot_url = Column(String)  # S3 URL or local path
-    frame_id = Column(String)
+    frame_id = Column(String, index=True)  # Index for frame queries
     # Geolocation (derived from camera lat/lon + heading if available)
     latitude = Column(Float)
     longitude = Column(Float)
-    location = Column(Geometry('POINT', srid=4326))  # PostGIS point for spatial queries
-    geofence_id = Column(Integer, ForeignKey("geofences.id"))  # Which geofence contains this detection
+    location = Column(Geometry('POINT', srid=4326), index=True)  # PostGIS spatial index
+    geofence_id = Column(Integer, ForeignKey("geofences.id"), index=True)  # Index for geofence queries
     detected_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
     
     # Relationships
