@@ -1,0 +1,15 @@
+.leaf {
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-primary, #22c55e);
+  opacity: 0.2;
+  pointer-events: none;
+  animation-name: float;
+}
+
+.leafAnim {
+  top: -5%;
+  animation-delay: var(--delay);
+  animation-duration: var(--duration);
+}

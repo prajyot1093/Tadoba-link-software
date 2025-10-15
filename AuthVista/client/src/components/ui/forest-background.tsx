@@ -1,5 +1,6 @@
 import { useEffect, useRef, memo } from "react";
 import { motion } from "framer-motion";
+import styles from "./forest-background.module.css";
 
 export const ForestBackground = memo(function ForestBackground({ children, blur = true }: { children: React.ReactNode; blur?: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -77,7 +78,7 @@ export const ForestParticles = memo(function ForestParticles() {
       {Array.from({ length: 20 }).map((_, i) => (
         <motion.div
           key={i}
-          className="absolute w-1 h-1 bg-white/40 rounded-full"
+          className={styles.dewDrop}
           style={{
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,

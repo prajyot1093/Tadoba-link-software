@@ -12,6 +12,7 @@ import { setAuthToken } from '@/lib/queryClient';
 import { queryClient } from '@/lib/queryClient';
 import { TreePine, Leaf, Sparkles } from 'lucide-react';
 import { ForestBackground, ForestParticles } from './ui/forest-background';
+import styles from './auth-modal.module.css';
 
 interface AuthResponse {
   user: {
@@ -196,7 +197,7 @@ export function AuthModal() {
                       <div className="relative">
                         <TreePine className="h-14 w-14 text-white drop-shadow-2xl" strokeWidth={1.8} />
                         <Leaf className="absolute -top-2 -right-2 h-5 w-5 text-secondary animate-pulse" />
-                        <Sparkles className="absolute -bottom-1 -left-2 h-4 w-4 text-white/80 animate-pulse" style={{ animationDelay: '0.7s' }} />
+                        <Sparkles className={`absolute -bottom-1 -left-2 h-4 w-4 text-white/80 animate-pulse ${styles.sparklesDelayed}`} />
                       </div>
                     </motion.div>
                     <h1 className="text-4xl font-bold text-white mb-1 font-poppins">Login</h1>
@@ -385,11 +386,8 @@ export function AuthModal() {
                       className="w-full h-full bg-transparent border-2 border-white/20 rounded-[40px] text-base text-white px-5 pr-12 focus:border-primary/60 focus:ring-2 focus:ring-primary/30 transition-all appearance-none cursor-pointer"
                       value={registerData.role}
                       onChange={(e) => setRegisterData({ ...registerData, role: e.target.value as 'local' | 'department' })}
-                      style={{ 
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
-                        backgroundRepeat: 'no-repeat',
-                        backgroundPosition: 'right 20px center'
-                      }}
+                      style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E")` }}
+                      className={`w-full h-full bg-transparent border-2 border-white/20 rounded-[40px] text-base text-white px-5 pr-12 focus:border-primary/60 focus:ring-2 focus:ring-primary/30 transition-all appearance-none cursor-pointer ${styles.selectCustom}`}
                     >
                       <option value="local" className="bg-gray-800 text-white">Local Resident</option>
                       <option value="department" className="bg-gray-800 text-white">Forest Department</option>

@@ -3,6 +3,7 @@ import { PawPrint, Shield, MapPin, Sparkles, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AuthModal } from "@/components/auth-modal";
 import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import styles from "./landing.module.css";
 
 export default function Landing() {
   const [leaves, setLeaves] = useState<Array<{ id: number; left: string; delay: string }>>([]);
@@ -22,7 +23,7 @@ export default function Landing() {
       {leaves.map((leaf) => (
         <div
           key={leaf.id}
-          className="absolute w-4 h-4 text-primary/20 animate-float pointer-events-none"
+          className={`${styles.leaf} ${styles.leafAnim}`}
           style={{
             left: leaf.left,
             top: "-5%",

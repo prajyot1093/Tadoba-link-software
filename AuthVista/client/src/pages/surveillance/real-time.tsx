@@ -15,6 +15,7 @@ import {
   Zap
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import styles from './real-time.module.css';
 import { GlassCard } from '@/components/ui/glass-card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -375,11 +376,11 @@ export default function SurveillanceRealTime() {
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
               <Camera className="w-8 h-8 text-green-600" />
-              Real-Time Surveillance
             </h1>
-            <p className="text-gray-600 mt-1">
-              Live webcam detection with YOLOv8
-            </p>
+            <canvas
+              ref={canvasRef}
+              className={`absolute inset-0 w-full h-full pointer-events-none ${showBboxes ? styles.bboxCanvasVisible : styles.bboxCanvasHidden}`}
+            />
           </div>
           
           <div className="flex items-center gap-4">

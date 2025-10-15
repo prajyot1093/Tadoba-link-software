@@ -1,0 +1,8 @@
+.sparklesDelayed {
+  animation-delay: 0.7s;
+}
+
+.selectCustom {
+  background-repeat: no-repeat;
+  background-position: right 20px center;
+}

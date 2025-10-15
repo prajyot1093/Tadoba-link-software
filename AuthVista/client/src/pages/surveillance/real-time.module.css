@@ -1,0 +1,23 @@
+/* Aspect ratio for video container */
+.aspect16by9 {
+  aspect-ratio: 16/9;
+}
+
+/* Canvas display for bounding boxes */
+.bboxCanvasVisible {
+  display: block;
+}
+.bboxCanvasHidden {
+  display: none;
+}
+.aspect16by9 {
+  aspect-ratio: 16/9;
+}
+
+.bboxCanvasVisible {
+  display: block;
+}
+
+.bboxCanvasHidden {
+  display: none;
+}
