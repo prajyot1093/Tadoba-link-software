@@ -148,7 +148,7 @@ export default function LocalDashboard() {
                       <p className="text-sm font-medium text-foreground">{alert.animalName}</p>
                       <p className="text-xs text-muted-foreground line-clamp-2">{alert.message}</p>
                       <p className="text-xs text-muted-foreground mt-1">
-                        {new Date(alert.createdAt).toLocaleString()} • {alert.distance.toFixed(1)} km away
+                        {alert.createdAt && new Date(alert.createdAt).toLocaleString()} • {alert.distance?.toFixed(1)} km away
                       </p>
                     </div>
                   </div>

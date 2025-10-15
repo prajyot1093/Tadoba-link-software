@@ -53,7 +53,9 @@ self.addEventListener('fetch', (event) => {
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request).catch(() => {
-        return caches.match('/offline.html');
+        return caches.match('/offline.html').then((response) => {
+          return response || new Response('Offline');
+        });
       })
     );
   }

@@ -18,11 +18,11 @@ export default defineConfig({
       ext: '.br',
     }),
     // Bundle analyzer (only in analyze mode)
-    process.env.ANALYZE && visualizer({
+    ...(process.env.ANALYZE ? [visualizer({
       open: true,
       gzipSize: true,
       brotliSize: true,
-    }),
+    })] : []),
   ],
   resolve: {
     alias: {

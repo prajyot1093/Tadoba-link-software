@@ -20,7 +20,7 @@ export default function DepartmentDashboard() {
   const totalTracked = animals.length;
   const todayAlerts = recentAlerts.filter(a => {
     const today = new Date().toDateString();
-    return new Date(a.createdAt).toDateString() === today;
+    return a.createdAt && new Date(a.createdAt).toDateString() === today;
   }).length;
 
   return (
@@ -185,7 +185,7 @@ export default function DepartmentDashboard() {
                       <p className="text-sm font-medium text-foreground">{alert.animalName}</p>
                       <p className="text-xs text-muted-foreground line-clamp-2">{alert.message}</p>
                       <p className="text-xs text-muted-foreground mt-1">
-                        {new Date(alert.createdAt).toLocaleString()}
+                        {alert.createdAt && new Date(alert.createdAt).toLocaleString()}
                       </p>
                     </div>
                   </div>
